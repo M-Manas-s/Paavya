@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "452596496070",
+    "project_id": "naariandroid",
+    "storage_bucket": "naariandroid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:452596496070:android:2ab7aa2187e8f9a2d109c7",
+        "android_client_info": {
+          "package_name": "com.example.naariAndroid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "452596496070-003amsiqgk2c36dtie4diecke9db0g7c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjeXzK6sUVt5bFjNcPWnoTAPlKFOb4GhU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "452596496070-003amsiqgk2c36dtie4diecke9db0g7c.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
