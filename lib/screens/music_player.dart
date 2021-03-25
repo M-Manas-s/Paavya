@@ -1,9 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:naariAndroid/class/MusicInfo.dart';
 import 'package:naariAndroid/class/music%20card.dart';
+import 'package:naariAndroid/class/music%20card2.dart';
 import 'package:naariAndroid/constants/constants.dart';
 import 'package:flutter_audio_query/flutter_audio_query.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 import 'dart:io';
 
@@ -57,10 +60,13 @@ class CustomTabBarView extends StatefulWidget {
 
 class CustomTabBarViewState extends State<CustomTabBarView> {
   List<SongInfo> songs;
+  List<MusicInfo> Podcasts;
   int currentIndex = 0;
   bool isPlaying = false;
   bool loading = true;
   bool loadbar = false;
+  bool loadingPodcasts = true;
+  bool playingLocal = true;
   bool shuffle = false;
   Play repeatStyle = Play.repeat;
 
@@ -96,29 +102,59 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
     super.initState();
     currentIndex = 0;
     getTracks();
+    getPodcastsmusic();
     player = new AudioPlayer();
+    Podcasts = [];
   }
 
-  void getTracks() async{
+  void getPodcastsmusic() {
+    CollectionReference music = FirebaseFirestore.instance.collection('Podcasts');
+    music.get().then((querySnapshot) {
+      querySnapshot.docs.forEach((result) async {
+        String url = result.data()['URL'];
+        String artist = result.data()['Artist'];
+        String title = result.data()['Name'];
+        MusicInfo tm = new MusicInfo(title: title, url: url, artist: artist);
+        Podcasts.add(tm);
+      });
+      setState(() {
+        loadingPodcasts = false;
+      });
+    });
+  }
+
+  void getTracks() async {
     songs = await FlutterAudioQuery().getSongs();
     setState(() {
-      songs =  songs;
+      songs = songs;
       print(songs);
     });
   }
 
-  void update(int ci) {
-    setSong(ci);
+  void updateLocal(int ci) {
+    setSong(ci,true);
   }
 
-  void setSong(int ci) async {
-    SongInfo songInfo = songs[ci];
+  void updatePodcasts(int ci)
+  {
+    setSong(ci,false);
+  }
+
+  void setSong(int ci, bool local) async {
+    int len = local ? songs.length : Podcasts.length;
+    SongInfo songInfo;
+    MusicInfo Podcast;
+    if (local)
+      songInfo = songs[ci];
+    else
+      Podcast = Podcasts[ci];
     if (player != null) player.dispose();
     player = new AudioPlayer();
-    await player.setUrl(songInfo.uri);
+    await player.setUrl(  local ?  songInfo.uri : Podcast.url );
     currentValue = minimumValue;
     maximumValue = player.duration.inMilliseconds.toDouble();
     setState(() {
+      playingLocal = local;
       currentIndex = ci;
       currentTime = getDuration(currentValue);
       endTime = getDuration(maximumValue);
@@ -131,29 +167,29 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
         if (shuffle) {
           var rng = new Random();
           setState(() {
-            currentIndex = rng.nextInt(songs.length - 1);
+            currentIndex = rng.nextInt(len - 1);
           });
-          setSong(currentIndex);
+          setSong(currentIndex,local);
         } else {
           switch (repeatStyle) {
             case Play.repeatOne:
               {
-                setSong(currentIndex);
+                setSong(currentIndex, local);
               }
               break;
 
             case Play.repeat:
               {
                 setState(() {
-                  currentIndex = (currentIndex+1)%songs.length;
+                  currentIndex = (currentIndex + 1) % len;
                 });
-                setSong(currentIndex);
+                setSong(currentIndex, local);
               }
               break;
 
             default:
               {
-                setSong(currentIndex);
+                setSong(currentIndex, local);
               }
               break;
           }
@@ -185,13 +221,14 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
   }
 
   void changeTrack(bool isNext) {
+    int len = playingLocal ? songs.length : Podcasts.length;
     if (isNext) {
-      currentIndex = (currentIndex+1)%songs.length;
+      currentIndex = (currentIndex + 1) % len;
     } else {
-       currentIndex = (currentIndex-1)%songs.length;
+      currentIndex = (currentIndex - 1) % len;
     }
     changeCurrentIndex(currentIndex);
-    setSong(currentIndex);
+    setSong(currentIndex,playingLocal);
     print(currentIndex);
   }
 
@@ -210,12 +247,11 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
   Widget build(BuildContext context) {
     Size query = MediaQuery.of(context).size;
     return Container(
-      margin: EdgeInsets.only(bottom: query.height* 0.1),
+      margin: EdgeInsets.only(bottom: query.height * 0.1),
       color: activeColor,
       child: TabBarView(
         controller: widget.controller,
         children: <Widget>[
-
           //Tab 1
           Center(
             child: Column(
@@ -223,7 +259,7 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
                 Expanded(
                   flex: 12,
                   child: Container(
-                      margin: EdgeInsets.only(top: query.width*0.05),
+                      margin: EdgeInsets.only(top: query.width * 0.05),
                       color: activeColor,
                       child: FutureBuilder(
                         future: FlutterAudioQuery()
@@ -232,7 +268,7 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
                           if (snapshot.hasData || songs != null) {
                             if (songs == null) songs = snapshot.data;
                             return Container(
-                              child: ListView.builder(
+                              child: songs.length!=0 ? ListView.builder(
                                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
@@ -241,9 +277,19 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
                                   return MusicCard(
                                     songInfo: songs[i],
                                     ci: i,
-                                    update: setSong,
+                                    update: updateLocal,
                                   );
                                 },
+                              ) : Center(
+                                child: AutoSizeText(
+                                  "No music found locally",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    letterSpacing: 1,
+                                    color: Color(0xFF1E7777),
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
                               margin: EdgeInsets.all(0),
                               padding: EdgeInsets.all(0),
@@ -258,102 +304,106 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
                         },
                       )),
                 ),
-                loadbar
+                loadbar && playingLocal
                     ? Expanded(
-                        flex: 2,
-                        child: Container(
-                          padding: EdgeInsets.only(
-                              left: query.width * 0.05,
-                              right: query.width * 0.05),
-                          decoration: BoxDecoration(
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey,
-                                blurRadius: 14.0,
-                              )
-                            ],
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(20),
-                                topLeft: Radius.circular(20)),
+                    flex: 2,
+                    child: Container(
+                      padding: EdgeInsets.only(
+                          left: query.width * 0.05,
+                          right: query.width * 0.05),
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 14.0,
+                          )
+                        ],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(20),
+                            topLeft: Radius.circular(20)),
+                      ),
+                      //margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: (songs[currentIndex].albumArtwork ==
+                                null)
+                                ? Image(
+                                image: AssetImage(
+                                    "assets/images/noalbum.png"),
+                                fit: BoxFit.fitHeight)
+                                : Image.file(
+                                File(songs[currentIndex].albumArtwork)),
                           ),
-                          //margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child:  ( songs[currentIndex].albumArtwork==null ) ? Image(
-                                    image:
-                                        AssetImage("assets/images/noalbum.png"),
-                                    fit: BoxFit.fitHeight) : Image.file( File( songs[currentIndex].albumArtwork ) ),
-                              ),
-                              SizedBox(
-                                width: query.width * (1 / 23),
-                              ),
-                              Expanded(
-                                flex: 5,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SingleChildScrollView(
-                                      child: Text(
-                                        "${processName(songs[currentIndex].displayName)}        ",
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          fontSize: 17,
-                                          letterSpacing: 2,
-                                          color: Color(0xFF1E7777),
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      scrollDirection: Axis.horizontal,
+                          SizedBox(
+                            width: query.width * (1 / 23),
+                          ),
+                          Expanded(
+                            flex: 5,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SingleChildScrollView(
+                                  child: Text(
+                                    "${processName(songs[currentIndex].displayName)}        ",
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      fontSize: 17,
+                                      letterSpacing: 2,
+                                      color: Color(0xFF1E7777),
+                                      fontWeight: FontWeight.w700,
                                     ),
-                                    SingleChildScrollView(
-                                      child: Text(songs[currentIndex].artist,
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            letterSpacing: 2,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w400,
-                                          )),
-                                      scrollDirection: Axis.horizontal,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: query.width * (1 / 23),
-                              ),
-                              Container(
-                                width: query.width * (1 / 10),
-                                height: query.width * (1 / 10),
-                                decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Color(0xFF193833),
-                                          Color(0xFF609394)
-                                        ]),
-                                    borderRadius: BorderRadius.circular(
-                                        query.width * (1 / 20))),
-                                child: FlatButton(
-                                  padding: EdgeInsets.all(0),
-                                  onPressed: () {
-                                    changeStatus();
-                                  },
-                                  child: Icon(
-                                    isPlaying ? Icons.pause : Icons.play_arrow,
-                                    color: Colors.white,
-                                    size: query.width * (1 / 15),
                                   ),
+                                  scrollDirection: Axis.horizontal,
                                 ),
-                              ),
-                            ],
+                                SingleChildScrollView(
+                                  child: Text(songs[currentIndex].artist,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        letterSpacing: 2,
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w400,
+                                      )),
+                                  scrollDirection: Axis.horizontal,
+                                ),
+                              ],
+                            ),
                           ),
-                        ))
+                          SizedBox(
+                            width: query.width * (1 / 23),
+                          ),
+                          Container(
+                            width: query.width * (1 / 10),
+                            height: query.width * (1 / 10),
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Color(0xFF193833),
+                                      Color(0xFF609394)
+                                    ]),
+                                borderRadius: BorderRadius.circular(
+                                    query.width * (1 / 20))),
+                            child: FlatButton(
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {
+                                changeStatus();
+                              },
+                              child: Icon(
+                                isPlaying ? Icons.pause : Icons.play_arrow,
+                                color: Colors.white,
+                                size: query.width * (1 / 15),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ))
                     : Container()
               ],
             ),
@@ -364,256 +414,267 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
             child: Container(
               margin: EdgeInsets.only(top: query.height * 0.04),
               color: activeColor,
-              child:
-                  loadbar
+              child: loadbar
                   ? Column(
-                      children: [
-                        Expanded(
-                          flex: 9,
-                          child: Container(
-                            color: activeColor,
-                            child: Column(
-                              children: [
-                                Container(
-                                  child: ( songs[currentIndex].albumArtwork==null ) ?Image(
-                                      image: AssetImage(
-                                          "assets/images/thumbnail.jpg"),
-                                      fit: BoxFit.fitWidth) : Image.file( File( songs[currentIndex].albumArtwork ) ),
-                                  margin: EdgeInsets.only(left: query.width*0.18, right: query.width*0.18),
-                                ),
-                                SizedBox(height: query.height*0.02),
-
-                                Container(
-                                  width: query.width * 0.9,
-                                  child: Center(
-                                    child: SingleChildScrollView(
-                                      child: AutoSizeText(
-                                        "${processName(songs[currentIndex].displayName)}",
-                                        maxLines: 1,
-                                        style: TextStyle(
-                                          fontSize: 21,
-                                          letterSpacing: 2,
-                                          color: Color(0xFF1E7777),
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      scrollDirection: Axis.horizontal,
-                                    ),
+                children: [
+                  Expanded(
+                    flex: 9,
+                    child: Container(
+                      color: activeColor,
+                      child: Column(
+                        children: [
+                          Container(
+                            child: playingLocal ? (  songs[currentIndex].albumArtwork ==
+                                null || playingLocal)
+                                ? Image(
+                                image: AssetImage(
+                                    "assets/images/thumbnail.jpg"),
+                                fit: BoxFit.fitWidth)
+                                : Image.file(File(
+                                songs[currentIndex].albumArtwork)) : Image(
+                                image: AssetImage(
+                                    "assets/images/thumbnail.jpg"),
+                                fit: BoxFit.fitWidth),
+                            margin: EdgeInsets.only(
+                                left: query.width * 0.18,
+                                right: query.width * 0.18),
+                          ),
+                          SizedBox(height: query.height * 0.02),
+                          Container(
+                            width: query.width * 0.9,
+                            child: Center(
+                              child: SingleChildScrollView(
+                                child: AutoSizeText( playingLocal ?
+                                "${processName(songs[currentIndex].displayName)}" : Podcasts[currentIndex].title,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    fontSize: 21,
+                                    letterSpacing: 2,
+                                    color: Color(0xFF1E7777),
+                                    fontWeight: FontWeight.w700,
                                   ),
                                 ),
-                                SizedBox(height: query.height * 0.0047),
-                                Container(
-                                  width: query.width * 0.85,
-                                  child: Center(
-                                    child: SingleChildScrollView(
-                                      child: Text(songs[currentIndex].artist,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            letterSpacing: 2,
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w400,
-                                          )),
-                                      scrollDirection: Axis.horizontal,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                                scrollDirection: Axis.horizontal,
+                              ),
                             ),
                           ),
-                        ),
-                        Expanded(
-                          flex: 4,
-                          child: Container(
-                            width: query.width,
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey,
-                                  blurRadius: 5.0,
-                                )
-                              ],
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(50),
-                                  topLeft: Radius.circular(50)),
+                          SizedBox(height: query.height * 0.0047),
+                          Container(
+                            width: query.width * 0.85,
+                            child: Center(
+                              child: SingleChildScrollView(
+                                child: Text( playingLocal ? songs[currentIndex].artist : Podcasts[currentIndex].artist,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      letterSpacing: 2,
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w400,
+                                    )),
+                                scrollDirection: Axis.horizontal,
+                              ),
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Column(children: [
-                                  Container(
-                                      width: query.width * 0.85,
-                                      margin: EdgeInsets.only(top: query.height * 0.02),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            currentTime,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              letterSpacing: 1,
-                                              color: Color(0xFF1E7777),
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                          Text(
-                                            endTime,
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              letterSpacing: 1,
-                                              color: Color(0xFF1E7777),
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                  SizedBox(
-                                    width: query.width * 0.9,
-                                    height: 10,
-                                    child: SliderTheme(
-                                      data: SliderThemeData(
-                                        thumbShape: RoundSliderThumbShape(
-                                            enabledThumbRadius: 6),
-                                        trackHeight: 3,
-                                      ),
-                                      child: Slider(
-                                        inactiveColor: Colors.black12,
-                                        activeColor: Color(0xFF1E7777),
-                                        min: minimumValue,
-                                        max: maximumValue,
-                                        value: currentValue,
-                                        onChanged: (value) {
-                                          currentValue = value;
-                                          player.seek(Duration(
-                                              milliseconds:
-                                                  currentValue.round()));
-                                        },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    flex: 4,
+                    child: Container(
+                      width: query.width,
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey,
+                            blurRadius: 5.0,
+                          )
+                        ],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(50),
+                            topLeft: Radius.circular(50)),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Column(children: [
+                            Container(
+                                width: query.width * 0.85,
+                                margin: EdgeInsets.only(
+                                    top: query.height * 0.02),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      currentTime,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        letterSpacing: 1,
+                                        color: Color(0xFF1E7777),
+                                        fontWeight: FontWeight.w700,
                                       ),
                                     ),
+                                    Text(
+                                      endTime,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        letterSpacing: 1,
+                                        color: Color(0xFF1E7777),
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                            SizedBox(
+                              width: query.width * 0.9,
+                              height: 10,
+                              child: SliderTheme(
+                                data: SliderThemeData(
+                                  thumbShape: RoundSliderThumbShape(
+                                      enabledThumbRadius: 6),
+                                  trackHeight: 3,
+                                ),
+                                child: Slider(
+                                  inactiveColor: Colors.black12,
+                                  activeColor: Color(0xFF1E7777),
+                                  min: minimumValue,
+                                  max: maximumValue,
+                                  value: currentValue,
+                                  onChanged: (value) {
+                                    currentValue = value;
+                                    player.seek(Duration(
+                                        milliseconds:
+                                        currentValue.round()));
+                                  },
+                                ),
+                              ),
+                            ),
+                          ]),
+                          Container(
+                            margin: EdgeInsets.only(
+                                bottom: query.height * 0.005),
+                            child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  GestureDetector(
+                                    child: Icon(Icons.shuffle,
+                                        color: shuffle
+                                            ? Color(0xFF1E7777)
+                                            : Colors.black,
+                                        size: 28),
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () {
+                                      setState(() {
+                                        shuffle = !shuffle;
+                                        if (shuffle)
+                                          repeatStyle = Play.none;
+                                      });
+                                    },
                                   ),
-                                ]),
-                                Container(
-                                  margin: EdgeInsets.only(bottom: query.height * 0.005),
-                                  child: Row(
+                                  Container(
+                                    padding: EdgeInsets.only(bottom: 5),
+                                    width: query.width * 0.45,
+                                    decoration: BoxDecoration(
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.grey,
+                                          blurRadius: 13.0,
+                                          spreadRadius: -13,
+                                          offset: Offset(0, 10),
+                                        )
+                                      ],
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(30)),
+                                    ),
+                                    child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                      MainAxisAlignment.spaceEvenly,
                                       children: [
                                         GestureDetector(
-                                          child: Icon(Icons.shuffle,
-                                              color: shuffle? Color(0xFF1E7777) : Colors.black, size: 28),
-                                          behavior: HitTestBehavior.translucent,
+                                          child: Icon(Icons.skip_previous,
+                                              color: Color(0xFF1E7777),
+                                              size: 29),
+                                          behavior:
+                                          HitTestBehavior.translucent,
                                           onTap: () {
-                                            setState(() {
-                                              shuffle = !shuffle;
-                                              if (shuffle)
-                                                  repeatStyle = Play.none;
-                                            });
+                                            changeTrack(false);
                                           },
                                         ),
                                         Container(
-                                          padding: EdgeInsets.only(bottom: 5),
-                                          width: query.width * 0.45,
+                                          width: query.width * (1 / 7),
+                                          height: query.width * (1 / 7),
                                           decoration: BoxDecoration(
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey,
-                                                blurRadius: 13.0,
-                                                spreadRadius: -13,
-                                                offset: Offset(0, 10),
-                                              )
-                                            ],
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(30)),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              GestureDetector(
-                                                child: Icon(Icons.skip_previous,
-                                                    color: Color(0xFF1E7777),
-                                                    size: 29),
-                                                behavior:
-                                                    HitTestBehavior.translucent,
-                                                onTap: () {
-                                                  changeTrack(false);
-                                                },
-                                              ),
-                                              Container(
-                                                width: query.width * (1 / 7),
-                                                height: query.width * (1 / 7),
-                                                decoration: BoxDecoration(
-                                                    gradient: LinearGradient(
-                                                        begin:
-                                                            Alignment.topCenter,
-                                                        end: Alignment
-                                                            .bottomCenter,
-                                                        colors: [
-                                                          Color(0xFF193833),
-                                                          Color(0xFF609394)
-                                                        ]),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            query.width *
-                                                                (1 / 3.5))),
-                                                child: FlatButton(
-                                                  padding: EdgeInsets.all(0),
-                                                  onPressed: () {
-                                                    changeStatus();
-                                                  },
-                                                  child: Icon(
-                                                    isPlaying
-                                                        ? Icons.pause
-                                                        : Icons.play_arrow,
-                                                    color: Colors.white,
-                                                    size:
-                                                        query.width * (1 / 10),
-                                                  ),
-                                                ),
-                                              ),
-                                              GestureDetector(
-                                                child: Icon(Icons.skip_next,
-                                                    color: Color(0xFF1E7777),
-                                                    size: 29),
-                                                behavior:
-                                                    HitTestBehavior.translucent,
-                                                onTap: () {
-                                                  //print("hello");
-                                                  changeTrack(true);
-                                                },
-                                              ),
-                                            ],
+                                              gradient: LinearGradient(
+                                                  begin:
+                                                  Alignment.topCenter,
+                                                  end: Alignment
+                                                      .bottomCenter,
+                                                  colors: [
+                                                    Color(0xFF193833),
+                                                    Color(0xFF609394)
+                                                  ]),
+                                              borderRadius:
+                                              BorderRadius.circular(
+                                                  query.width *
+                                                      (1 / 3.5))),
+                                          child: FlatButton(
+                                            padding: EdgeInsets.all(0),
+                                            onPressed: () {
+                                              changeStatus();
+                                            },
+                                            child: Icon(
+                                              isPlaying
+                                                  ? Icons.pause
+                                                  : Icons.play_arrow,
+                                              color: Colors.white,
+                                              size:
+                                              query.width * (1 / 10),
+                                            ),
                                           ),
                                         ),
                                         GestureDetector(
-                                          child: Icon(
-                                              repeatStyle == Play.repeatOne
-                                                  ? Icons.repeat_one
-                                                  : Icons.repeat,
-                                              color: repeatStyle == Play.none
-                                                  ? Colors.black
-                                                  : Color(0xFF1E7777),
-                                              size: 28),
-                                          behavior: HitTestBehavior.translucent,
+                                          child: Icon(Icons.skip_next,
+                                              color: Color(0xFF1E7777),
+                                              size: 29),
+                                          behavior:
+                                          HitTestBehavior.translucent,
                                           onTap: () {
-                                            changeRepeatStyle();
+                                            //print("hello");
+                                            changeTrack(true);
                                           },
                                         ),
-                                      ]),
-                                )
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    )
-                  :
-                  Container(
+                                      ],
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    child: Icon(
+                                        repeatStyle == Play.repeatOne
+                                            ? Icons.repeat_one
+                                            : Icons.repeat,
+                                        color: repeatStyle == Play.none
+                                            ? Colors.black
+                                            : Color(0xFF1E7777),
+                                        size: 28),
+                                    behavior: HitTestBehavior.translucent,
+                                    onTap: () {
+                                      changeRepeatStyle();
+                                    },
+                                  ),
+                                ]),
+                          )
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              )
+                  : Container(
                 child: Center(
                   child: AutoSizeText(
-                    "Play some Music!",
+                    "Play something!",
                     style: TextStyle(
                       fontSize: 30,
                       letterSpacing: 3,
@@ -627,9 +688,40 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
           ),
 
           // Tab 3
-          Center(
-            child: Container(
+          Container(
+            margin: EdgeInsets.only(top: query.width * 0.05),
+            child: loadingPodcasts
+                ? Container(
+              height: MediaQuery.of(context).size.height * 0.4,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+                : Container(
               color: activeColor,
+              child: Podcasts.length!=0 ? ListView.builder(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                itemCount: Podcasts.length,
+                itemBuilder: (context, i) {
+                  return MusicCard2(
+                    musicInfo: Podcasts[i],
+                    ci: i,
+                    update: updatePodcasts,
+                  );
+                },
+              ) : Center(
+                child: AutoSizeText(
+                  "Podcasts will appear here!",
+                  style: TextStyle(
+                    fontSize: 20,
+                    letterSpacing: 1,
+                    color: Color(0xFF1E7777),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
             ),
           ),
         ],
@@ -658,9 +750,9 @@ class CustomTabs extends StatelessWidget {
           padding: EdgeInsets.all(16),
           child: Center(
               child: kTextStyleLocal(
-            isActive: isActive,
-            label: label,
-          )),
+                isActive: isActive,
+                label: label,
+              )),
         ),
         curve: Curves.fastOutSlowIn,
         decoration: BoxDecoration(
@@ -669,9 +761,9 @@ class CustomTabs extends StatelessWidget {
               topRight: Radius.circular(isActive ? 30 : 0),
               topLeft: Radius.circular(isActive ? 30 : 0),
               bottomLeft:
-                  Radius.circular(activeIndex == labelIndex - 1 ? 30 : 0),
+              Radius.circular(activeIndex == labelIndex - 1 ? 30 : 0),
               bottomRight:
-                  Radius.circular(activeIndex == labelIndex + 1 ? 30 : 0)),
+              Radius.circular(activeIndex == labelIndex + 1 ? 30 : 0)),
         ),
       ),
     );
@@ -764,7 +856,7 @@ class _SampleTabScreenState extends State<SampleTabScreen>
                 labelIndex: 1,
               ),
               CustomTabs(
-                label: "PODCAST",
+                label: "PODCASTS",
                 activeIndex: _currentIndex,
                 labelIndex: 2,
               ),
