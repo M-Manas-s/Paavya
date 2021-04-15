@@ -50,7 +50,7 @@ class _sign_ScreenState extends State<sign_Screen> {
       ),
       inAsyncCall: spinner,
       child: WillPopScope(
-        onWillPop: () async => false,
+       // onWillPop: () async => false,
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Form(

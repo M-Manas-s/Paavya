@@ -10,7 +10,7 @@ class welcome_Screen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushNamed(context, sign_Screen.id);
+      Navigator.pushNamedAndRemoveUntil(context, sign_Screen.id, (r)=>false);
     });
 
     return Scaffold(

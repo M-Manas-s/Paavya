@@ -42,45 +42,42 @@ class _setting_ScreenState extends State<setting_Screen> {
             ),
             settingsButton(
               title: "Profile Settings",
-              on: () {},
             ),
             settingsButton(
               title: "Notification Settings",
-              on: () {},
+              widgetList: [
+                Text("Turn off Pad Reminder"),
+                Text("Turn off Period Reminder"),
+                Text("Frequency of Period Reminder"),
+              ],
             ),
             settingsButton(
               title: "Security",
-              on: () {},
             ),
             settingsButton(
               title: "Privacy",
-              on: () {},
             ),
             settingsButton(
               title: "About",
-              on: () {
-                print(GoogleSignIn(scopes: ['email']).currentUser);
-              },
             ),
             settingsButton(
               title: "FAQs",
-              on: () {},
             ),
             settingsButton(
               title: "Contact Us",
-              on: () {},
             ),
-              settingsButton(
-                title: "Logout",
-                on: () async{
-                  await _auth.signOut();
-                  GoogleSignIn(scopes: ['email']).signOut();
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  prefs.remove('email');
-                  print(user);
-                  Navigator.pushNamed(context, sign_Screen.id);
-                },
-              )
+            settingsButton(
+              title: "Logout",
+              special: true,
+              on: () async{
+                await _auth.signOut();
+                GoogleSignIn(scopes: ['email']).signOut();
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.remove('email');
+                print(user);
+                Navigator.pushNamed(context, sign_Screen.id);
+              },
+            )
           ],
         )),
       ),

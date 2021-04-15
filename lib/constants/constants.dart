@@ -2,10 +2,12 @@ import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:custom_navigation_bar/custom_navigation_bar.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/animation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:intl/intl.dart';
+import 'dart:math' as math;
 import 'package:naariAndroid/constants/my_flutter_app_icons.dart';
 import 'package:naariAndroid/screens/experiment.dart';
 import 'package:naariAndroid/screens/settings.dart';
@@ -185,31 +187,87 @@ class buttonWidget extends StatelessWidget {
   }
 }
 //SETTINGS BLOCK
-class settingsButton extends StatelessWidget {
+
+// RaisedButton(onPressed: on,
+//
+// child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// children: [
+// Text("$title",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),
+// Icon(Icons.navigate_next,color: Colors.white,)
+// ],
+// ),
+// shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+// color: Color(0xFF008080),
+
+class settingsButton extends StatefulWidget {
   final String title;
+  final bool special;
   final Function on;
+  double contH = 0;
+  final List<Widget> widgetList;
 
-  const settingsButton({Key key, @required this.title,@required this.on}) : super(key: key);
+  settingsButton({Key key, @required this.title,@required this.widgetList, this.on, this.special=false}) : super(key: key);
+  @override
+  _settingsButtonState createState() => _settingsButtonState();
+}
 
-
+class _settingsButtonState extends State<settingsButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 25,right: 25),
-      child: RaisedButton(onPressed: on,
 
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("$title",style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),
-            Icon(Icons.navigate_next,color: Colors.white,)
-          ],
-        ),
+      child: RaisedButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: Color(0xFF008080),
+        onPressed: !widget.special ? () {
+          setState(() {
+            if ( widget.contH==20 )
+                widget.contH =0;
+            else if ( widget.widgetList != null)
+            widget.contH = 20;
+          });
+        } : widget.on,
+        child:Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              AnimatedContainer(duration: Duration(milliseconds: 300),height: widget.contH==0 ? 0 : 10),
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(widget.title, style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),
+                  widget.contH!=20 ? Icon(
+                      Icons.navigate_next,
+                      color: Colors.white,
+                    ) :
+                  Transform.rotate(
+                    angle: 90 * math.pi/180,
+                    child: Icon(
+                      Icons.navigate_next,
+                      color: Colors.white,
+                    ),
+                  ),
+                  ],
+              ),
+              widget.widgetList!=null ? AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+            //    curve: Curves.fastOutSlowIn,
+                child: Column(
+                    children: widget.widgetList.map((e) =>
+                      AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          height: widget.contH,
+                          child:e
+                      ),
+                    ).toList(),
+                ),
+                ) : Container(),
+            ]
+        ),
       ),
     );
   }
 }
+
 //DONT HAVE ACCOUNT?
 class signUpRichText extends StatelessWidget {
   final String title;

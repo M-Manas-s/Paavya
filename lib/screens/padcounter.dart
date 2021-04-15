@@ -6,8 +6,6 @@ import 'Counter/Main.dart';
 import 'Counter/Setting.dart';
 import 'Counter/Tapp.dart';
 
-
-
 enum ThemeStyle {
   Dribbble,
   Light,
@@ -19,6 +17,8 @@ enum ThemeStyle {
   WithTitle,
   BlurEffect
 }
+
+
 
 class counter_Screen extends StatefulWidget {
   static String id = "counter_Screen";
