@@ -203,8 +203,9 @@ class settingsButton extends StatefulWidget {
   final String title;
   final bool special;
   final Function on;
-  double contH = 0;
-  final List<Widget> widgetList;
+  double contH=0;
+  bool sw=false;
+  final List<funcAndChild> widgetList;
 
   settingsButton({Key key, @required this.title,@required this.widgetList, this.on, this.special=false}) : super(key: key);
   @override
@@ -212,6 +213,7 @@ class settingsButton extends StatefulWidget {
 }
 
 class _settingsButtonState extends State<settingsButton> {
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -220,22 +222,26 @@ class _settingsButtonState extends State<settingsButton> {
       child: RaisedButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: Color(0xFF008080),
-        onPressed: !widget.special ? () {
-          setState(() {
-            if ( widget.contH==20 )
-                widget.contH =0;
-            else if ( widget.widgetList != null)
-            widget.contH = 20;
-          });
-        } : widget.on,
+        onPressed: !widget.special ? () {}  : widget.on,
         child:Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AnimatedContainer(duration: Duration(milliseconds: 300),height: widget.contH==0 ? 0 : 10),
+              AnimatedContainer(duration: Duration(milliseconds: 300),height: !widget.sw ? 0 : 10),
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(widget.title, style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),
-                  widget.contH!=20 ? Icon(
+                  !widget.special ? GestureDetector(
+                    onTap: !widget.special ? () {
+                      setState(() {
+                        if ( widget.sw )
+                          widget.contH =0;
+                        else if ( widget.widgetList != null)
+                          widget.contH = 30;
+                        if (widget.widgetList!=null)
+                          widget.sw = !widget.sw;
+                      });
+                    } : (){},
+                  child: !widget.sw ? Icon(
                       Icons.navigate_next,
                       color: Colors.white,
                     ) :
@@ -246,17 +252,64 @@ class _settingsButtonState extends State<settingsButton> {
                       color: Colors.white,
                     ),
                   ),
+                  ) : Container()
                   ],
               ),
-              widget.widgetList!=null ? AnimatedContainer(
+              widget.widgetList!=null? AnimatedContainer(
+                margin: EdgeInsets.only(left: 10,bottom: widget.sw?10:0),
                 duration: Duration(milliseconds: 300),
-            //    curve: Curves.fastOutSlowIn,
                 child: Column(
                     children: widget.widgetList.map((e) =>
                       AnimatedContainer(
                           duration: Duration(milliseconds: 300),
                           height: widget.contH,
-                          child:e
+                          child: widget.sw?
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                e.child,
+                                e.opt==optionType.checkbox ?
+                                GestureDetector(
+                                    child : !e.cond() ? Icon(Icons.check_box, color: Colors.white,) :
+                                    Icon(Icons.check_box_outline_blank_rounded, color: Colors.white),
+                                    onTap: () {
+                                      setState(() {
+                                        e.fun();
+                                      });
+                                    }
+                                ) :
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.all(Radius.circular(4))),
+                                  padding: EdgeInsets.only(left:5,right:5),
+                                  child: DropdownButton<String>(
+                                    value: e.cond().toString(),
+                                    icon: const Icon(Icons.arrow_drop_down, color: Colors.black,),
+                                    iconSize: 24,
+                                    elevation: 16,
+                                    style: const TextStyle(color: Colors.black),
+                                    underline: Container(
+                                      height: 0,
+                                      color: Colors.black,
+                                    ),
+                                    onChanged: (String newValue) {
+                                      setState(() {
+                                        e.fun(int.parse(newValue));
+                                      });
+                                    },
+                                    items:e.itemList
+                                        .map<DropdownMenuItem<String>>((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                  ),
+                                ),
+                              ]
+                          )
+                              :Container()
                       ),
                     ).toList(),
                 ),
