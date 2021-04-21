@@ -207,7 +207,7 @@ class settingsButton extends StatefulWidget {
   bool sw=false;
   final List<funcAndChild> widgetList;
 
-  settingsButton({Key key, @required this.title,@required this.widgetList, this.on, this.special=false}) : super(key: key);
+  settingsButton({Key key, @required this.title,this.widgetList, this.on, this.special=false}) : super(key: key);
   @override
   _settingsButtonState createState() => _settingsButtonState();
 }

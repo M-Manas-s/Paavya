@@ -5,10 +5,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:naariAndroid/constants/constants.dart';
 import 'package:naariAndroid/screens/sign_Screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-bool padReminder = true;
-bool periodReminder = true;
-int periodRemDay = 7;
+bool padReminder;
+bool periodReminder;
+int periodRemDay;
 
 enum optionType{
   checkbox,
@@ -32,11 +33,21 @@ class setting_Screen extends StatefulWidget {
 
 class _setting_ScreenState extends State<setting_Screen> {
   FirebaseAuth _auth = FirebaseAuth.instance;
+  SharedPreferences prefs;
+
+  Future<void> load()
+  async {
+    prefs = await SharedPreferences.getInstance();
+    padReminder = prefs.getBool('padReminder') ?? true;
+    periodReminder = prefs.getBool('periodReminder') ?? true ;
+    periodRemDay = prefs.getInt('periodRemDay') ?? 7;
+  }
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    load();
     print("INSIDE GENERAL");
     print(user);
   }
@@ -69,11 +80,12 @@ class _setting_ScreenState extends State<setting_Screen> {
                 funcAndChild(
                   opt: optionType.checkbox,
                   child: Text(
-                    "Pad Reminder off",
+                    "Pad Reminder Off",
                     style: TextStyle(color: Colors.white),
                   ),
                   fun: () {
                     padReminder = !padReminder;
+                    prefs.setBool('padReminder', padReminder);
                   },
                   cond: <bool>() {
                     return padReminder;
@@ -87,6 +99,7 @@ class _setting_ScreenState extends State<setting_Screen> {
                   ),
                   fun: () {
                     periodReminder = !periodReminder;
+                    prefs.setBool('periodReminder',periodReminder);
                   },
                   cond: <bool>() {
                     return periodReminder;
@@ -100,6 +113,7 @@ class _setting_ScreenState extends State<setting_Screen> {
                   ),
                   fun: (int val) {
                     periodRemDay = val;
+                    prefs.setInt('periodRemDay', periodRemDay);
                   },
                   cond: <bool>() {
                     return periodRemDay;
