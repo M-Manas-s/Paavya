@@ -21,7 +21,6 @@ class welcome_Screen extends StatelessWidget {
             child: Stack(
               children: [
                 Container(),
-
                 Hero(
                   tag: "cont",
                   child: Container(

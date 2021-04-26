@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:naariAndroid/constants/constants.dart';
@@ -70,7 +71,7 @@ class _counter_ScreenState extends State<counter_Screen> {
         ),
         body: ContainedTabBarView(
           initialIndex: 1,
-          tabs: [Text('STORES'), Text('MAIN'), Text('SETTING')],
+          tabs: [AutoSizeText('STORES'), AutoSizeText('MAIN'), AutoSizeText('SETTING')],
           tabBarProperties:
           TabBarProperties(
               innerPadding: const EdgeInsets.symmetric(

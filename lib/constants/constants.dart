@@ -411,7 +411,7 @@ List<BottomNavigationBarItem> items=[
   const BottomNavigationBarItem(
       icon: Icon(Icons.home_filled), label: 'calendar'),
   const BottomNavigationBarItem(
-      icon: Icon(Icons.videogame_asset), label: 'calendar'),
+      icon: Icon(Icons.music_note), label: 'calendar'),
   const BottomNavigationBarItem(
       icon: Icon(Icons.settings), label: 'calendar'),
 ];
