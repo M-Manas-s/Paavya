@@ -71,10 +71,10 @@ class _CalendarPageState extends State<CalendarPage> {
   selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: selectedDate,
+      initialDate: DateTime(2020),
       // Refer step 1
       firstDate: DateTime(2000),
-      lastDate: DateTime(2025),
+      lastDate: DateTime(2100),
       helpText: 'Select Purchase Date',
       // Can be used as title
 
@@ -204,7 +204,7 @@ class _CalendarPageState extends State<CalendarPage> {
               },
               weekFormat: false,
               // markedDateCustomShapeBorder: ,
-              todayButtonColor: null,
+              todayButtonColor: Colors.redAccent,
               todayBorderColor: Colors.white,
               // markedDatesMap: _markedDateMap,
               height: 420.0,
