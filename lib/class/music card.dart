@@ -97,7 +97,6 @@ class _MusicCardState extends State<MusicCard> with TickerProviderStateMixin{
       child: GestureDetector(
         onTapDown: (TapDownDetails) {
           _toggleScrolling();
-          print(widget.songInfo.albumArtwork);
         },
         child: Card(
           shape: RoundedRectangleBorder(

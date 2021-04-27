@@ -127,7 +127,6 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
     songs = await FlutterAudioQuery().getSongs();
     setState(() {
       songs = songs;
-      print(songs);
     });
   }
 
@@ -229,7 +228,6 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
     }
     changeCurrentIndex(currentIndex);
     setSong(currentIndex,playingLocal);
-    print(currentIndex);
   }
 
   void changeStatus() {
@@ -642,7 +640,6 @@ class CustomTabBarViewState extends State<CustomTabBarView> {
                                           behavior:
                                           HitTestBehavior.translucent,
                                           onTap: () {
-                                            //print("hello");
                                             changeTrack(true);
                                           },
                                         ),
@@ -812,7 +809,6 @@ class _SampleTabScreenState extends State<SampleTabScreen>
         setState(() {
           _currentIndex = (_tabController.animation.value)
               .round(); //_tabController.animation.value returns double
-          //print('_currentIndex: $ind');
         });
       });
   }
@@ -839,7 +835,6 @@ class _SampleTabScreenState extends State<SampleTabScreen>
               setState(() {
                 _currentIndex = index;
               });
-              print(index);
             },
             indicatorPadding: EdgeInsets.zero,
             labelPadding: EdgeInsets.zero,

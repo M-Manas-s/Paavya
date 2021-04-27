@@ -45,7 +45,6 @@ class _CalendarPageState extends State<CalendarPage> {
   calcDiff() {
     setState(() {
       diff = d2.difference(d1).inDays;
-      print("Diff: $diff");
     });
   }
 
@@ -63,7 +62,6 @@ class _CalendarPageState extends State<CalendarPage> {
     setState(() {
       d1 = DateTime.parse(s1);
       d2 = DateTime.parse(s2);
-      diff = d2.difference(d1).inDays;
     });
     calcDiff();
   }
@@ -71,11 +69,11 @@ class _CalendarPageState extends State<CalendarPage> {
   selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: DateTime(2020),
+      initialDate: DateTime.now(),
       // Refer step 1
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
-      helpText: 'Select Purchase Date',
+      helpText: 'Select  Date',
       // Can be used as title
 
       cancelText: 'Cancel',
@@ -130,112 +128,146 @@ class _CalendarPageState extends State<CalendarPage> {
             unselectedLabelStyle: TextStyle(fontSize: 15),
             unselectedLabelColor: Color(0xFF8CC4C4)),
         views: [
-          Container(
-            decoration: BoxDecoration(
-              color: Color(0xFF006666),
-              borderRadius: BorderRadius.circular(40),
-            ),
-            padding: EdgeInsets.all(10),
-            margin: EdgeInsets.only(left: 16.0, right: 16.0, bottom: 80.0),
-            child: CalendarCarousel<Event>(
-              onCalendarChanged: (var x) {
-                this.setState(() {
-                  this.setState(() => _currentDate = x);
-                });
-              },
-              // onDayPressed: (DateTime date, List<Event> events) {
-              //   this.setState(() => _currentDate = date);
-              // },
-              daysTextStyle: TextStyle(
-                color: Colors.white,
-              ),
-              weekDayFormat: WeekdayFormat.short,
-              weekdayTextStyle: TextStyle(color: Colors.white),
-              nextMonthDayBorderColor: Colors.white12,
-              prevMonthDayBorderColor: Colors.white12,
-              headerTextStyle: TextStyle(color: Colors.white),
-              headerText: Months[_currentDate.month - 1],
-              iconColor: Colors.white,
-              weekendTextStyle: TextStyle(
-                color: Colors.white,
-              ),
-              thisMonthDayBorderColor: Colors.grey,
+          Column(
+            children: [
+              Expanded(
+                  flex: 2,
+                  child: Center(
+                    child: Text(
+                      "Your Calendar",
+                      style: headingStyle.copyWith(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E7777),
+                          letterSpacing: 1,),
+                    ),
+                  )),
+              Expanded(
+                flex: 19,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(0xFF006F6F), Color(0xFF00AAAA)]),
+                    borderRadius: BorderRadius.circular(40),
+                  ),
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  margin: EdgeInsets.fromLTRB(16.0, 15.0, 16.0, 0),
+                  child: CalendarCarousel<Event>(
+                    onCalendarChanged: (var x) {
+                      this.setState(() {
+                        this.setState(() => _currentDate = x);
+                      });
+                    },
+                    // onDayPressed: (DateTime date, List<Event> events) {
+                    //   this.setState(() => _currentDate = date);
+                    // },
+                    daysTextStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                    weekDayFormat: WeekdayFormat.short,
+                    weekdayTextStyle: TextStyle(color: Colors.white),
+                    nextMonthDayBorderColor: Colors.white24,
+                    nextDaysTextStyle: TextStyle(color: Colors.white60),
+                    prevMonthDayBorderColor: Colors.white24,
+                    prevDaysTextStyle: TextStyle(color: Colors.white60),
+                    headerTextStyle: TextStyle(color: Colors.white),
+                    headerText: Months[_currentDate.month - 1],
+                    iconColor: Colors.white,
+                    weekendTextStyle: TextStyle(
+                      color: Colors.white,
+                    ),
+                    thisMonthDayBorderColor: Colors.grey,
 //      weekDays: null, /// for pass null when you do not want to render weekDays
 //      headerText: Container( /// Example for rendering custom header
 //        child: Text('Custom Header'),
 //      ),
-              customDayBuilder: (
-                /// you can provide your own build function to make custom day containers
-                bool isSelectable,
-                int index,
-                bool isSelectedDay,
-                bool isToday,
-                bool isPrevMonthDay,
-                TextStyle textStyle,
-                bool isNextMonthDay,
-                bool isThisMonthDay,
-                DateTime day,
-              )  {
+                    customDayBuilder: (
+                      /// you can provide your own build function to make custom day containers
+                      bool isSelectable,
+                      int index,
+                      bool isSelectedDay,
+                      bool isToday,
+                      bool isPrevMonthDay,
+                      TextStyle textStyle,
+                      bool isNextMonthDay,
+                      bool isThisMonthDay,
+                      DateTime day,
+                    ) {
+                      /// If you return null, [CalendarCarousel] will build container for current [day] with default function.
+                      /// This way you can build custom containers for specific days only, leaving rest as default.
 
+                      DateTime next = d2.add(Duration(days: diff));
+                      if (day.isAfter(next.subtract(Duration(days: 3))) &&
+                          day.isBefore(next.add(Duration(days: 3))))
+                        return Container(
+                          constraints: BoxConstraints.expand(),
+                          child: Center(
+                              child: Text(
+                            "${day.day}",
+                            style: TextStyle(
+                              color: Colors.white,
+                            ),
+                          )),
+                          decoration: BoxDecoration(
+                              color: Color.fromRGBO(
+                                  40,
+                                  170 - 5 * day.difference(next).inDays.abs(),
+                                  170 - 5 * day.difference(next).inDays.abs(),
+                                  1),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                  color: Color.fromRGBO(0, 255, 255, 1))),
+                        );
 
-                /// If you return null, [CalendarCarousel] will build container for current [day] with default function.
-                /// This way you can build custom containers for specific days only, leaving rest as default.
+                      return null;
+                    },
+                    weekFormat: false,
+                    // markedDateCustomShapeBorder: ,
+                    todayButtonColor: Colors.tealAccent.withOpacity(0.3),
+                    todayBorderColor: Colors.white,
+                    // markedDatesMap: _markedDateMap,
+                    height: 420.0,
+                    // selectedDateTime: _currentDate,
+                    daysHaveCircularBorder: true,
 
-                // Example: every 15th of month, we have a flight, we can place an icon in the container like that:
-                // if (day == d1 ||
-                //     day == d2) {
-                //   return Container(
-                //     constraints: BoxConstraints.expand(),
-                //     child: Center(child: Text("${day.day}")),
-                //     decoration: BoxDecoration(
-                //         color: Colors.orange, shape: BoxShape.circle),
-                //   );
-                // }
-                DateTime next = d2.add(Duration(days: diff));
-                if ( day.isAfter(next.subtract(Duration(days:3))) && day.isBefore(next.add(Duration(days:3))) )
-                  return Container(
-                    constraints: BoxConstraints.expand(),
-                    child: Center(child: Text("${day.day}")),
-                    decoration: BoxDecoration(
-                        color: Color.fromRGBO(255-15*day.difference(next).inDays.abs(),30,30,1-0.05*day.difference(next).inDays.abs()), shape: BoxShape.circle),
-                  );
-
-                return null;
-              },
-              weekFormat: false,
-              // markedDateCustomShapeBorder: ,
-              todayButtonColor: Colors.redAccent,
-              todayBorderColor: Colors.white,
-              // markedDatesMap: _markedDateMap,
-              height: 420.0,
-              // selectedDateTime: _currentDate,
-              daysHaveCircularBorder: true,
-
-              /// null for not rendering any border, true for circular border, false for rectangular border
-            ),
+                    /// null for not rendering any border, true for circular border, false for rectangular border
+                  ),
+                ),
+              ),
+              Expanded(
+                  flex: 7,
+                  child: Container(
+                    decoration: BoxDecoration(color: Colors.white),
+                  ))
+            ],
           ),
           Container(
-            padding: EdgeInsets.only(bottom: 40),
+            padding: EdgeInsets.only(top: 20),
             color: Color(0xFFEFEFEF),
             child: Center(
                 child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Container(
-                  padding: EdgeInsets.only(left:15, right:15),
-                  child: Text("We will use this data to mark your next period on Calendar",
+                  padding: EdgeInsets.only(left: 15, right: 15),
+                  child: Text(
+                      "We will use this data to mark your next period on Calendar",
                       textAlign: TextAlign.center,
                       style: kheroLogoText.copyWith(
-                          fontSize: 15, color: Color(0xFF535050))),
+                          fontSize: 14, color: Color(0xFF535050))),
                 ),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 Text("Last but one period was on",
                     style: kheroLogoText.copyWith(
-                        fontSize: 15, color: Color(0xFF535050))),
+                        fontSize: 14, color: Color(0xFF535050))),
                 Text(" ${d1.day}-${d1.month}-${d1.year}",
                     style: kheroLogoText.copyWith(
-                        fontSize: 25, color: Color(0xFF535050))),
-                SizedBox(height: 15),
+                        fontSize: 23, color: Color(0xFF535050))),
+                SizedBox(height: 5),
                 ElevatedButton(
                   style: ButtonStyle(
                       backgroundColor:
@@ -243,11 +275,11 @@ class _CalendarPageState extends State<CalendarPage> {
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Colors.red, width: 2),
+                        side: BorderSide(color: Colors.teal, width: 2),
                       ))),
                   onPressed: () async {
                     DateTime rec = await selectDate(context);
-                    if (rec==null) return;
+                    if (rec == null) return;
                     setState(() {
                       d1 = rec;
                       calcDiff();
@@ -258,17 +290,17 @@ class _CalendarPageState extends State<CalendarPage> {
                   child: Text(
                     "Callibrate date",
                     style: kheroLogoText.copyWith(
-                        fontSize: 20, color: Color(0xFF535050)),
+                        fontSize: 15, color: Color(0xFF535050)),
                   ),
                 ),
-                SizedBox(height: 25),
+                SizedBox(height: 35),
                 Text("Last period was on",
                     style: kheroLogoText.copyWith(
-                        fontSize: 15, color: Color(0xFF535050))),
+                        fontSize: 14, color: Color(0xFF535050))),
                 Text("${d2.day}-${d2.month}-${d2.year}",
                     style: kheroLogoText.copyWith(
-                        fontSize: 25, color: Color(0xFF535050))),
-                SizedBox(height: 15),
+                        fontSize: 23, color: Color(0xFF535050))),
+                SizedBox(height: 5),
                 ElevatedButton(
                   style: ButtonStyle(
                       backgroundColor:
@@ -276,11 +308,11 @@ class _CalendarPageState extends State<CalendarPage> {
                       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Colors.red, width: 2),
+                        side: BorderSide(color: Colors.teal, width: 2),
                       ))),
                   onPressed: () async {
                     DateTime rec = await selectDate(context);
-                    if (rec==null) return;
+                    if (rec == null) return;
                     setState(() {
                       d2 = rec;
                       calcDiff();
@@ -291,7 +323,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   child: Text(
                     "Callibrate date",
                     style: kheroLogoText.copyWith(
-                        fontSize: 20, color: Color(0xFF535050)),
+                        fontSize: 15, color: Color(0xFF535050)),
                   ),
                 ),
                 SizedBox(height: 50),
