@@ -20,8 +20,6 @@ class _MusicCard2State extends State<MusicCard2> with TickerProviderStateMixin {
   bool scroll = false;
   double minimumValue = 0.0, maximumValue = 0.0, currentValue = 0.0;
   String currentTime = '', endTime = '';
-  final GlobalKey<CustomTabBarViewState> key =
-      GlobalKey<CustomTabBarViewState>();
 
   String getDuration(double value) {
     Duration duration = Duration(milliseconds: value.round());
@@ -110,7 +108,7 @@ class _MusicCard2State extends State<MusicCard2> with TickerProviderStateMixin {
                             maxLines: 1,
                             style: TextStyle(
                               fontSize: 17,
-                              letterSpacing: 2,
+                              letterSpacing: 1,
                               color: Color(0xFF1E7777),
                               fontWeight: FontWeight.w700,
                             ),
