@@ -8,6 +8,8 @@ import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
 import 'package:naariAndroid/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:naariAndroid/class/notifications.dart';
 
 class CalendarPage extends StatefulWidget {
   @override
@@ -35,6 +37,7 @@ class _CalendarPageState extends State<CalendarPage> {
   DateTime d2 = DateTime.now();
   int diff = 0;
   SharedPreferences prefs;
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 
   @override
   void initState() {
@@ -70,11 +73,9 @@ class _CalendarPageState extends State<CalendarPage> {
     final DateTime picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      // Refer step 1
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
       helpText: 'Select  Date',
-      // Can be used as title
 
       cancelText: 'Cancel',
       confirmText: 'Set',
@@ -143,7 +144,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     ),
                   )),
               Expanded(
-                flex: 19,
+                flex: 21,
                 child: Container(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
@@ -286,6 +287,8 @@ class _CalendarPageState extends State<CalendarPage> {
                       prefs.setString(
                           "d1", DateFormat("yyyy-MM-dd").format(d1));
                     });
+                    if (prefs.getBool('periodReminder'))
+                      cycleBeginNotif();
                   },
                   child: Text(
                     "Callibrate date",
@@ -319,6 +322,8 @@ class _CalendarPageState extends State<CalendarPage> {
                       prefs.setString(
                           "d2", DateFormat("yyyy-MM-dd").format(d2));
                     });
+                    if (prefs.getBool('periodReminder'))
+                      cycleBeginNotif();
                   },
                   child: Text(
                     "Callibrate date",

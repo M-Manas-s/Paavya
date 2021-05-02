@@ -5,7 +5,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:naariAndroid/constants/constants.dart';
 import 'package:naariAndroid/screens/sign_Screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:naariAndroid/class/notifications.dart';
 
 bool padReminder;
 bool periodReminder;
@@ -100,6 +100,10 @@ class _setting_ScreenState extends State<setting_Screen> {
                   fun: () {
                     periodReminder = !periodReminder;
                     prefs.setBool('periodReminder',periodReminder);
+                    if ( periodReminder )
+                        cycleBeginNotif();
+                    else
+                        cacnelNotif();
                   },
                   cond: <bool>() {
                     return periodReminder;
@@ -114,11 +118,12 @@ class _setting_ScreenState extends State<setting_Screen> {
                   fun: (int val) {
                     periodRemDay = val;
                     prefs.setInt('periodRemDay', periodRemDay);
+                    cycleBeginNotif();
                   },
                   cond: <bool>() {
                     return periodRemDay;
                   },
-                  itemList : <String>['7','4','3','2']
+                  itemList : <String>['7','4','3']
                 )
               ],
             ),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:naariAndroid/constants/Database.dart';
 import 'package:naariAndroid/constants/constants.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../main.dart';
 
 
@@ -15,8 +16,12 @@ class Main extends StatefulWidget {
 class _MainState extends State<Main> {
 
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  SharedPreferences prefs;
 
   Future<void> notifs() async {
+
+    prefs = await SharedPreferences.getInstance();
+
     flutterLocalNotificationsPlugin =
         FlutterLocalNotificationsPlugin();
     const AndroidInitializationSettings initializationSettingsAndroid =
@@ -71,8 +76,8 @@ class _MainState extends State<Main> {
             var cont= snapshot.data.docs[0]["counter"];
             if ( cont<5 )
               {
-                print("Alert");
-                sendNotif();
+                if (prefs.getBool('padReminder'))
+                  sendNotif();
               }
             return Container(
                 child: Text(
