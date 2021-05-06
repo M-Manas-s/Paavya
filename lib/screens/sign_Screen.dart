@@ -154,17 +154,21 @@ class _sign_ScreenState extends State<sign_Screen> {
                                           setState(() {
                                             spinner = true;
                                           });
-                                          var user = await auth.signInWithEmailAndPassword(
-                                              email: email, password: password);
-                                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                                          prefs.setString('email', '$email');
-                                          if (user != null) {
-                                            Navigator.pushNamed(context, navBar.id);
-                                          } else {
+                                          try {
+                                            var user = await auth.signInWithEmailAndPassword(
+                                                email: email, password: password);
+                                            SharedPreferences prefs = await SharedPreferences.getInstance();
+                                            prefs.setString('email', '$email');
+                                            if (user != null) {
+                                              Navigator.pushNamed(
+                                                  context, navBar.id);
+                                            }
+                                          }
+                                          on Exception{
                                             setState(() {
                                               spinner = false;
                                             });
-                                          }
+                                        }
                                         }
                                       },
                                     ),
@@ -256,7 +260,7 @@ class _sign_ScreenState extends State<sign_Screen> {
     );
   }
 
-  _getTasks(String email, String phone, String name) {
+  _getTasks(String email, String phone, String name) async {
     print("INSIDE FUNCTION PLEASE");
     print(email);
     FirebaseFirestore.instance
@@ -272,7 +276,9 @@ class _sign_ScreenState extends State<sign_Screen> {
           "Username": "$name",
           "Mobile no." : "$phone",
           "Email" : "$email",
-          "counter":0
+          "counter":0,
+          "lastLogin": DateTime.now().toString(),
+          "perday":0
         });
       }
       else
@@ -294,11 +300,16 @@ class _sign_ScreenState extends State<sign_Screen> {
               "Username": "$name",
               "Mobile no." : "$phone",
               "Email" : "$email",
-              "counter":0
+              "counter":0,
+              "lastLogin": DateTime.now().toString(),
+              "perday":0
             });
             return null;
           }
         });
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('periodBegun',false);
   }
 }
 

@@ -15,45 +15,9 @@ class Main extends StatefulWidget {
 
 class _MainState extends State<Main> {
 
-  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  SharedPreferences prefs;
-
-  Future<void> notifs() async {
-
-    prefs = await SharedPreferences.getInstance();
-
-    flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-    const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-    final InitializationSettings initializationSettings = InitializationSettings(
-        android: initializationSettingsAndroid);
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings,
-        onSelectNotification: (String payload) async {
-          if (payload != null) {
-            debugPrint('notification payload: $payload');
-          }
-          print(payload);
-        });
-  }
-
-  Future<void> sendNotif() async {
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-    AndroidNotificationDetails(
-        'Naari', 'Naari', 'Maari Android',
-        importance: Importance.max,
-        priority: Priority.high,
-        showWhen: false);
-    const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(android: androidPlatformChannelSpecifics);
-    await flutterLocalNotificationsPlugin.show(
-        0, 'Low Pad Count!', 'Less than 5 pads remaining!', platformChannelSpecifics,
-        payload: 'item x');
-  }
 
   @override
   void initState() {
-    notifs();
     super.initState();
   }
 
@@ -62,7 +26,7 @@ class _MainState extends State<Main> {
     return Scaffold(
         backgroundColor:Color(0xFFEFEFEF),
         body: Center(
-          heightFactor: 3,
+          heightFactor: 4,
           child: _getTasks()
         ));
   }
@@ -74,16 +38,11 @@ class _MainState extends State<Main> {
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             var cont= snapshot.data.docs[0]["counter"];
-            if ( cont<5 )
-              {
-                if (prefs.getBool('padReminder'))
-                  sendNotif();
-              }
             return Container(
                 child: Text(
                   "AVAILABLE\n$cont",
                   textAlign: TextAlign.center,
-                  style: kheroLogoText.copyWith( fontSize: 50,color: Color(0xFF535050)),)
+                  style: kheroLogoText.copyWith( fontSize: 45,color: Color(0xFF535050)),)
             );
           } else {
             return Container();

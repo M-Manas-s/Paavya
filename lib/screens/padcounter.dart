@@ -36,7 +36,6 @@ class _counter_ScreenState extends State<counter_Screen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _selectedItemPosition = 1;
     gtUser();
@@ -46,7 +45,6 @@ class _counter_ScreenState extends State<counter_Screen> {
     final us = _auth.currentUser;
     if (us != null) {
       user = us;
-      print(user);
     }
   }
 
@@ -70,8 +68,8 @@ class _counter_ScreenState extends State<counter_Screen> {
           ),
         ),
         body: ContainedTabBarView(
-          initialIndex: 1,
-          tabs: [AutoSizeText('STORES'), AutoSizeText('MAIN'), AutoSizeText('SETTING')],
+          initialIndex: 0,
+          tabs: [AutoSizeText('MAIN'), AutoSizeText('SETTING')],
           tabBarProperties:
           TabBarProperties(
               innerPadding: const EdgeInsets.symmetric(
@@ -90,7 +88,6 @@ class _counter_ScreenState extends State<counter_Screen> {
               unselectedLabelStyle: TextStyle(fontSize: 15),
               unselectedLabelColor: Color(0xFF8CC4C4)),
           views: [
-            Tapp(),
             Main(),
             setting()
           ],

@@ -27,6 +27,66 @@ Future<void> cacnelNotif() async {
   await flutterLocalNotificationsPlugin.cancelAll();
 }
 
+Future<void> sendLowPadNotif() async {
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+  final InitializationSettings initializationSettings =
+  InitializationSettings(android: initializationSettingsAndroid);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+        if (payload != null) {
+          debugPrint('notification payload: $payload');
+        }
+        print(payload);
+      });
+
+  const AndroidNotificationDetails androidPlatformChannelSpecifics =
+  AndroidNotificationDetails(
+      'Naari', 'Naari', 'Naari Android',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false);
+  const NotificationDetails platformChannelSpecifics =
+  NotificationDetails(android: androidPlatformChannelSpecifics);
+  await flutterLocalNotificationsPlugin.show(
+      0, 'Low Pad Count!', 'Less than 5 pads remaining!', platformChannelSpecifics,
+      payload: 'item x');
+}
+
+Future<void> sendFutureLowPadNotif(int d) async {
+
+  FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  FlutterLocalNotificationsPlugin();
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher');
+  final InitializationSettings initializationSettings =
+  InitializationSettings(android: initializationSettingsAndroid);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onSelectNotification: (String payload) async {
+        if (payload != null) {
+          debugPrint('notification payload: $payload');
+        }
+        print(payload);
+      });
+
+  tz.initializeTimeZones();
+  tz.setLocalLocation(tz.getLocation('Asia/Kolkata'));
+
+  await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      'Low Pad Count!', 'Less than 5 pads remaining!',
+      tz.TZDateTime.now(tz.local).add(Duration(days: d)),
+      const NotificationDetails(
+          android: AndroidNotificationDetails('your channel id',
+              'your channel name', 'your channel description')),
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+      UILocalNotificationDateInterpretation.absoluteTime);
+}
+
 Future<void> cycleBeginNotif() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 

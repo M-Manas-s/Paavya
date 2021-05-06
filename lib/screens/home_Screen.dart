@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:naariAndroid/constants/constants.dart';
 import 'package:naariAndroid/screens/padcounter.dart';
@@ -35,6 +36,7 @@ class _home_ScreenState extends State<home_Screen> {
     // TODO: implement initState
     super.initState();
     _selectedItemPosition=2;
+    print("Getting user");
     gtUser();
   }
 
@@ -42,8 +44,10 @@ class _home_ScreenState extends State<home_Screen> {
     final us = _auth.currentUser;
     if (us != null) {
       user = us;
-      print(user);
+      print("User $user");
     }
+    else
+      print("User null");
   }
 
   @override

@@ -445,18 +445,24 @@ Widget snakebar(Function ontap, int pos){
 User user;
 
 //UpdateTask
-void updateTask(int updatedValue, String id) {
+void updateCount(int updatedValue, String id) {
 
   Database.updateTask(id, {
     'counter': updatedValue,
-    'perday' : 0
   });
 }
-void updateTask2(int updatedValue, String id) {
+void updatePerDayUsage(int updatedValue, String id) {
 
   Database.updateTask(id, {
 
     'perday' : updatedValue
+  });
+}
+
+void updateLastLogin( DateTime d, String id )
+{
+  Database.updateTask(id, {
+    'lastLogin' : d.toString()
   });
 }
 

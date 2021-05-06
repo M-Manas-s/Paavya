@@ -13,7 +13,7 @@ class setting extends StatefulWidget {
 }
 
 class _settingState extends State<setting> {
-  int stepvalue = 0;
+  int stepvalue;
   int padperday=0;
 
   selectDate(BuildContext context) async {
@@ -45,6 +45,7 @@ class _settingState extends State<setting> {
       });
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(backgroundColor: Color(0xFFEFEFEF), body: _getTasks());
@@ -62,8 +63,11 @@ class _settingState extends State<setting> {
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
 
           if (snapshot.hasData) {
+
+            stepvalue = snapshot.data.docs[0]["perday"].toInt();
+
             return Padding(
-              padding: const EdgeInsets.only(bottom:80),
+              padding: const EdgeInsets.only(top:20,bottom:80),
               child: ListView(
 
                 children: [
@@ -75,7 +79,8 @@ class _settingState extends State<setting> {
                       text: TextSpan(
                         text: "SET COUNT",
                         style: kheroLogoText.copyWith(
-                            fontSize: 50, color: Color(0xFF535050)),
+                          decoration: TextDecoration.underline,
+                            fontSize: 35, color: Color(0xFF535050)),
                       ),
                     )),
                   ),
@@ -90,7 +95,7 @@ class _settingState extends State<setting> {
                           infoProperties: InfoProperties(
                             modifier: (double value) {
                               final roundedValue =
-                                  value.ceil().toInt().toString();
+                                  value.floor().toInt().toString();
                               return '$roundedValue';
                             },
                           ),
@@ -108,11 +113,11 @@ class _settingState extends State<setting> {
                       max: 30,
                       initialValue: snapshot.data.docs[0]["counter"].toDouble(),
                       onChange: (double value) {
-                        final roundedValue = value.ceil().toInt();
+                        final roundedValue = value.floor().toInt();
                         setState(() {
                           counter = roundedValue.toDouble().toInt();
                           print(counter);
-                          updateTask(counter, snapshot.data.docs[0].id);
+                          updateCount(counter, snapshot.data.docs[0].id);
                         });
                       },
                     ),
@@ -123,7 +128,8 @@ class _settingState extends State<setting> {
                     child: Center(
                       child: Text(
                         'Pad Usage Per Day',
-                        style: kheroLogoText.copyWith(fontWeight: FontWeight.bold,
+                        style: kheroLogoText.copyWith(
+                            decoration: TextDecoration.underline,fontWeight: FontWeight.bold,
                             fontSize: 30, color: Color(0xFF535050)),
                       ),
                     ),
@@ -136,16 +142,14 @@ class _settingState extends State<setting> {
                         withPlusMinus: true,
                         iconsColor: Colors.red,
                         stepperValue: stepvalue,
-                        initialValue: 0,
+                        initialValue: snapshot.data.docs[0]["perday"].toInt(),
                         speedTransitionLimitCount:
                             3, //Trigger count for fast counting
                         onChanged: (int value) {
-
-
                             setState(() {
                               stepvalue = value;
 
-                              updateTask2(stepvalue, snapshot.data.docs[0].id);
+                              updatePerDayUsage(stepvalue, snapshot.data.docs[0].id);
                             });
 
                         },
@@ -160,6 +164,15 @@ class _settingState extends State<setting> {
                       ),
                     ),
                   ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Text("*Slide the number to either side to increase or decrease the count",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 13, color: Color(0xFF535050)
+                    ),),
+                  ),
+                  SizedBox(height:10),
                   Center(
                     child: Padding(
                         padding: const EdgeInsets.all(11.0),
@@ -198,7 +211,7 @@ class _settingState extends State<setting> {
                           child: Text(
                             'Set Purchase Date',
                             style: kheroLogoText.copyWith(
-                                fontSize: 20, color: Color(0xFF535050)),
+                                fontSize: 14, color: Color(0xFF535050)),
                           ),
                         ),
                       ),
@@ -208,7 +221,10 @@ class _settingState extends State<setting> {
               ),
             );
           } else {
-            return Container();
+            return Container(child: Text("Please connect to the Internet",
+            style: kheroLogoText.copyWith(
+              fontSize: 24, color: Color(0xFF535050)),
+            ));
           }
         });
   }

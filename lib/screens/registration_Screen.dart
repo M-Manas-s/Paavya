@@ -194,10 +194,13 @@ class _registration_ScreenState extends State<registration_Screen> {
                                   "Username": "$userName",
                                   "Mobile no." : number,
                                   "Email" : email,
-                                  "counter":0
+                                  "counter":0,
+                                  "lastLogin": DateTime.now().toString(),
+                                  "perday":0
                                 });
                                 SharedPreferences prefs = await SharedPreferences.getInstance();
                                 prefs.setString('email', '$email');
+                                prefs.setBool('periodBegun',false);
                                 if (newuser != null) {
                                   Navigator.pushNamed(context, navBar.id);
                                 }

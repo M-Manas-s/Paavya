@@ -38,6 +38,7 @@ class _CalendarPageState extends State<CalendarPage> {
   int diff = 0;
   SharedPreferences prefs;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+  bool cycleOnset=false;
 
   @override
   void initState() {
@@ -53,6 +54,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   getDates() async {
     prefs = await SharedPreferences.getInstance();
+    cycleOnset = prefs.getBool("periodBegun")??false;
     String ts = "", s1 = "", s2 = "";
     s1 = prefs.getString("d1") ?? "";
     s2 = prefs.getString("d2") ?? "";
@@ -335,6 +337,9 @@ class _CalendarPageState extends State<CalendarPage> {
                 GestureDetector(
                   onTap: () {
                     prefs.setBool("periodBegun", true);
+                    setState(() {
+                      cycleOnset=!cycleOnset;
+                    });
                   },
                   child: Container(
                     padding: EdgeInsets.all(15),
@@ -343,7 +348,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: Text(
-                      "My Period Has Begun",
+                      cycleOnset?"My cycle has ended":"My cycle Has Begun",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),

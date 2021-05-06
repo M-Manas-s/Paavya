@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:naariAndroid/class/notifications.dart';
 import 'package:naariAndroid/constants/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home_Screen_beta.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 
@@ -16,22 +18,72 @@ class _SliverHomeState extends State<SliverHome> {
 
 
   FirebaseAuth _auth = FirebaseAuth.instance;
+  SharedPreferences prefs;
+
+  Future<void> calculatePads() async {
+    DateTime dt;
+    int pads;
+    int perday;
+    var uid;
+
+    FirebaseFirestore.instance
+        .collection('Users').where("Email",
+        isEqualTo: "${
+            user.email
+        }")
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+         String date = doc.data()['lastLogin'];
+        if ( date!=null )
+          dt = DateTime.parse(date);
+        else
+          dt = null;
+         pads = doc['counter'];
+         perday = doc.data()['perday'];
+         uid = doc.id;
+         if ( dt == null )
+           updateLastLogin(DateTime.now(), uid);
+         else if ( pads!=null && perday!=null )
+         {
+           if ( prefs.getBool('periodBegun') )
+           {
+             pads -= DateTime.now().difference(dt).inDays*perday;
+             pads = pads<0?0:pads;
+             print("New count : $pads");
+             updateCount(pads, uid);
+             if ( pads<5 )
+               sendLowPadNotif();
+           }
+         }
+         updateLastLogin(DateTime.now(), uid);
+      });
+    });
+  }
+
+
+  void getPrefs() async{
+    prefs = await SharedPreferences.getInstance();
+  }
+
+
   void gtUser() {
     final us = _auth.currentUser;
 
     if (us != null) {
       setState(() {
         user = us;
-        print(user);
+        print("User $user");
       });
-
+      getPrefs();
+      calculatePads();
     }
   }
+
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
     gtUser();
   }
 

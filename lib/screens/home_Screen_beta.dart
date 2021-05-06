@@ -7,6 +7,7 @@ import 'package:naariAndroid/screens/music_player.dart';
 import 'package:naariAndroid/screens/settings.dart';
 import 'experiment.dart';
 import 'padcounter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class navBar extends StatefulWidget {
   static String id="home_View";
@@ -39,13 +40,28 @@ class _navBarState extends State<navBar> {
         _selectedItemPosition = widget.pageid;
       });
     }
+    //calculatePadCOunt();
   }
+
+  // Future<void> calculatePadCOunt()
+  // async {
+  //   await FirebaseFirestore.instance
+  //       .collection('Users')
+  //       .where("Email",
+  //       isEqualTo: "${
+  //           user.email
+  //       }")
+  //       .snapshots().forEach((element) {
+  //     print("element: $element");
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
   if(FirebaseAuth.instance.currentUser != null || GoogleSignIn(scopes: ['email']).currentUser !=null ){
     print("Inside navabar");
-    print(FirebaseAuth.instance.currentUser);
+  //  print(FirebaseAuth.instance.currentUser);
+
     return Stack(
       children: [
         Scaffold(
@@ -67,7 +83,10 @@ class _navBarState extends State<navBar> {
   }
   else{
     return Container(
-      child: Text("CONTAINER"),
+      child: Text("Please turn on Internet Connection",
+      style: TextStyle(
+          fontSize: 30, color: Color(0xFF535050)
+      ),),
     );
   }
 
