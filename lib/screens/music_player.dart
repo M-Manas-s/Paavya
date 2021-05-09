@@ -29,7 +29,7 @@ class MusicPlayer extends StatefulWidget {
 class _MusicPlayerState extends State<MusicPlayer> {
 
   List<SongInfo> songs;
-  List<MusicInfo> Podcasts;
+  List<MusicInfo> podcasts;
   int currentIndex = 0;
   bool isPlaying = false;
   bool loading = true;
@@ -73,7 +73,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
     getTracks();
     getPodcastsmusic();
     player = new AudioPlayer();
-    Podcasts = [];
+    podcasts = [];
   }
 
   void getPodcastsmusic() {
@@ -85,7 +85,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
         String artist = result.data()['Artist'];
         String title = result.data()['Name'];
         MusicInfo tm = new MusicInfo(title: title, url: url, artist: artist);
-        Podcasts.add(tm);
+        podcasts.add(tm);
       });
       setState(() {
         loadingPodcasts = false;
@@ -109,16 +109,16 @@ class _MusicPlayerState extends State<MusicPlayer> {
   }
 
   void setSong(int ci, bool local) async {
-    int len = local ? songs.length : Podcasts.length;
+    int len = local ? songs.length : podcasts.length;
     SongInfo songInfo;
-    MusicInfo Podcast;
+    MusicInfo podcast;
     if (local)
       songInfo = songs[ci];
     else
-      Podcast = Podcasts[ci];
+      podcast = podcasts[ci];
     if (player != null) player.dispose();
     player = new AudioPlayer();
-    await player.setUrl(local ? songInfo.uri : Podcast.url);
+    await player.setUrl(local ? songInfo.uri : podcast.url);
     currentValue = minimumValue;
     maximumValue = player.duration.inMilliseconds.toDouble();
     setState(() {
@@ -189,7 +189,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
   }
 
   void changeTrack(bool isNext) {
-    int len = playingLocal ? songs.length : Podcasts.length;
+    int len = playingLocal ? songs.length : podcasts.length;
     if (isNext) {
       currentIndex = (currentIndex + 1) % len;
     } else {
@@ -427,8 +427,10 @@ class _MusicPlayerState extends State<MusicPlayer> {
                     Expanded(
                       flex: 10,
                       child: Container(
+                        margin: EdgeInsets.only(bottom: query.height*0.02),
                         color: activeColor,
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Container(
                               child: playingLocal
@@ -449,7 +451,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                   left: query.width * 0.14,
                                   right: query.width * 0.14),
                             ),
-                            SizedBox(height: query.height * 0.02),
+                            SizedBox(height: query.height*0.001),
                             Container(
                               width: query.width * 0.9,
                               child: Center(
@@ -457,7 +459,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                   child: AutoSizeText(
                                     playingLocal
                                         ? "${processName(songs[currentIndex].displayName)}"
-                                        : Podcasts[currentIndex].title,
+                                        : podcasts[currentIndex].title,
                                     maxLines: 1,
                                     style: TextStyle(
                                       fontSize: 21,
@@ -470,7 +472,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                 ),
                               ),
                             ),
-                            SizedBox(height: query.height * 0.0047),
                             Container(
                               width: query.width * 0.85,
                               child: Center(
@@ -478,7 +479,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                                   child: Text(
                                       playingLocal
                                           ? songs[currentIndex].artist
-                                          : Podcasts[currentIndex].artist,
+                                          : podcasts[currentIndex].artist,
                                       style: TextStyle(
                                         fontSize: 14,
                                         letterSpacing: 2,
@@ -715,15 +716,15 @@ class _MusicPlayerState extends State<MusicPlayer> {
               )
                   : Container(
                 color: activeColor,
-                child: Podcasts.length != 0
+                child: podcasts.length != 0
                     ? ListView.builder(
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  itemCount: Podcasts.length,
+                  itemCount: podcasts.length,
                   itemBuilder: (context, i) {
                     return MusicCard2(
-                      musicInfo: Podcasts[i],
+                      musicInfo: podcasts[i],
                       ci: i,
                       update: updatePodcasts,
                     );
@@ -755,7 +756,7 @@ class kTextStyleLocal extends StatelessWidget {
   final bool isActive;
   final String label;
 
-  kTextStyleLocal({Key key, this.isActive, this.label}) : super(key: key) {}
+  kTextStyleLocal({Key key, this.isActive, this.label}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
