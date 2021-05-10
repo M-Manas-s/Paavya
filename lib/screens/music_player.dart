@@ -430,64 +430,77 @@ class _MusicPlayerState extends State<MusicPlayer> {
                         margin: EdgeInsets.only(bottom: query.height*0.02),
                         color: activeColor,
                         child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Container(
-                              child: playingLocal
-                                  ? (songs[currentIndex].albumArtwork ==
-                                  null ||
-                                  playingLocal)
-                                  ? Image(
-                                  image: AssetImage(
-                                      "assets/images/thumbnail.jpg"),
-                                  fit: BoxFit.fitWidth)
-                                  : Image.file(File(
-                                  songs[currentIndex].albumArtwork))
-                                  : Image(
-                                  image: AssetImage(
-                                      "assets/images/thumbnail.jpg"),
-                                  fit: BoxFit.fitWidth),
-                              margin: EdgeInsets.only(
-                                  left: query.width * 0.14,
-                                  right: query.width * 0.14),
-                            ),
-                            SizedBox(height: query.height*0.001),
-                            Container(
-                              width: query.width * 0.9,
-                              child: Center(
-                                child: SingleChildScrollView(
-                                  child: AutoSizeText(
-                                    playingLocal
-                                        ? "${processName(songs[currentIndex].displayName)}"
-                                        : podcasts[currentIndex].title,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                      fontSize: 21,
-                                      letterSpacing: 2,
-                                      color: Color(0xFF1E7777),
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                  scrollDirection: Axis.horizontal,
+                            Expanded(
+                              flex: 5,
+                              child: Container(
+                                child: playingLocal
+                                    ? (songs[currentIndex].albumArtwork ==
+                                    null ||
+                                    playingLocal)
+                                    ? Image(
+                                    image: AssetImage(
+                                        "assets/images/thumbnail.jpg"),
+                                    fit: BoxFit.fitWidth)
+                                    : Image.file(File(
+                                    songs[currentIndex].albumArtwork))
+                                    : Image(
+                                    image: AssetImage(
+                                        "assets/images/thumbnail.jpg"),
+                                    //fit: BoxFit.fitWidth
+                                ),
+                                margin: EdgeInsets.only(
+                                    left: query.width * 0.14,
+                                    right: query.width * 0.14,
+                                  bottom: query.height * 0.01,
                                 ),
                               ),
                             ),
-                            Container(
-                              width: query.width * 0.85,
-                              child: Center(
-                                child: SingleChildScrollView(
-                                  child: Text(
-                                      playingLocal
-                                          ? songs[currentIndex].artist
-                                          : podcasts[currentIndex].artist,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        letterSpacing: 2,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w400,
-                                      )),
-                                  scrollDirection: Axis.horizontal,
-                                ),
+                            Expanded(
+                              flex : 1,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 20),
+                                    child: Center(
+                                      child: SingleChildScrollView(
+                                        child: AutoSizeText(
+                                          playingLocal
+                                              ? "${processName(songs[currentIndex].displayName)}"
+                                              : podcasts[currentIndex].title,
+                                          maxLines: 1,
+                                          style: TextStyle(
+                                            fontSize: 21,
+                                            letterSpacing: 2,
+                                            color: Color(0xFF1E7777),
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        scrollDirection: Axis.horizontal,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                                    child: Center(
+                                      child: SingleChildScrollView(
+                                        child: Text(
+                                            playingLocal
+                                                ? songs[currentIndex].artist
+                                                : podcasts[currentIndex].artist,
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              letterSpacing: 2,
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w400,
+                                            )),
+                                        scrollDirection: Axis.horizontal,
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
                             ),
                           ],
