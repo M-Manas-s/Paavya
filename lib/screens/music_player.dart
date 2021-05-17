@@ -223,12 +223,12 @@ class _MusicPlayerState extends State<MusicPlayer> {
             height: query.height,
             decoration: infoContainer,
             child: Center(
-              child: Text("MUSIC PLAYER", style: headingStyle),
+              child: Text("PODCASTS", style: headingStyle),
             ),
           ),
         ),
         body: ContainedTabBarView(
-          tabs: [AutoSizeText('MUSIC'), AutoSizeText('PLAYING'), AutoSizeText('PODCASTS')],
+          tabs: [ AutoSizeText('PODCASTS'), AutoSizeText('PLAYING')],
           tabBarProperties: TabBarProperties(
               innerPadding: const EdgeInsets.symmetric(
                 horizontal: 10.0,
@@ -252,6 +252,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
               unselectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
               unselectedLabelColor: Color(0xFF8CC4C4)),
           views: [
+            /*
             Container(
               //padding: EdgeInsets.only(bottom: query.height * 0.1),
               color: activeColor,
@@ -415,8 +416,50 @@ class _MusicPlayerState extends State<MusicPlayer> {
                 ),
               ),
             ),
+            */
 
-            //Tab 2
+            // Podcasts Tab
+            Container(
+              color: activeColor,
+              padding: EdgeInsets.only(top: query.height * 0.02, bottom : query.height*0.095),
+              child: loadingPodcasts
+                  ? Container(
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+                  : Container(
+                color: activeColor,
+                child: podcasts.length != 0
+                    ? ListView.builder(
+                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: podcasts.length,
+                  itemBuilder: (context, i) {
+                    return MusicCard2(
+                      musicInfo: podcasts[i],
+                      ci: i,
+                      update: updatePodcasts,
+                    );
+                  },
+                )
+                    : Center(
+                  child: AutoSizeText(
+                    "Podcasts will appear here!",
+                    style: TextStyle(
+                      fontSize: 20,
+                      letterSpacing: 1,
+                      color: Color(0xFF1E7777),
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+            //Playing Tab
             Center(
               child: Container(
                 padding: EdgeInsets.only(top: query.height * 0.03),
@@ -701,6 +744,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                   ],
                 )
                     : Container(
+                  padding: EdgeInsets.only(bottom: query.height*0.15),
                   child: Center(
                     child: AutoSizeText(
                       "Play something!",
@@ -710,47 +754,6 @@ class _MusicPlayerState extends State<MusicPlayer> {
                         color: Color(0xFF1E7777),
                         fontWeight: FontWeight.w700,
                       ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-            // Tab 3
-            Container(
-              color: activeColor,
-              padding: EdgeInsets.only(top: query.height * 0.02, bottom : query.height*0.095),
-              child: loadingPodcasts
-                  ? Container(
-                height: MediaQuery.of(context).size.height * 0.4,
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              )
-                  : Container(
-                color: activeColor,
-                child: podcasts.length != 0
-                    ? ListView.builder(
-                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: podcasts.length,
-                  itemBuilder: (context, i) {
-                    return MusicCard2(
-                      musicInfo: podcasts[i],
-                      ci: i,
-                      update: updatePodcasts,
-                    );
-                  },
-                )
-                    : Center(
-                  child: AutoSizeText(
-                    "Podcasts will appear here!",
-                    style: TextStyle(
-                      fontSize: 20,
-                      letterSpacing: 1,
-                      color: Color(0xFF1E7777),
-                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),

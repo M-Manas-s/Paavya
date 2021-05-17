@@ -9,7 +9,7 @@ int calcDiff(DateTime d1, DateTime d2) {
   return diff;
 }
 
-Future<void> cacnelNotif() async {
+Future<void> cancelNotif() async {
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   const AndroidInitializationSettings initializationSettingsAndroid =

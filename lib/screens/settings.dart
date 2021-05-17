@@ -103,7 +103,7 @@ class _setting_ScreenState extends State<setting_Screen> {
                     if ( periodReminder )
                         cycleBeginNotif();
                     else
-                        cacnelNotif();
+                        cancelNotif();
                   },
                   cond: <bool>() {
                     return periodReminder;

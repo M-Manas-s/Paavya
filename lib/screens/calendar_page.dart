@@ -336,10 +336,12 @@ class _CalendarPageState extends State<CalendarPage> {
                 SizedBox(height: 50),
                 GestureDetector(
                   onTap: () {
-                    prefs.setBool("periodBegun", true);
                     setState(() {
                       cycleOnset=!cycleOnset;
                     });
+                    prefs.setBool("periodBegun", cycleOnset);
+                    if ( cycleOnset==false )
+                      cancelNotif();
                   },
                   child: Container(
                     padding: EdgeInsets.all(15),
@@ -348,7 +350,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: Text(
-                      cycleOnset?"My cycle has ended":"My cycle Has Begun",
+                      cycleOnset?"My cycle has Ended":"My cycle has Begun",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
