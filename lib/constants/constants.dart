@@ -14,14 +14,14 @@ import 'package:naariAndroid/screens/settings.dart';
 
 import 'Database.dart';
 
-
 //CONSTANTS
 
 const indicatorColor = AlwaysStoppedAnimation<Color>(Color(0xFF004C4C));
-const headingStyle= TextStyle(letterSpacing: 7, color: Colors.white, fontSize: 20);
+const headingStyle =
+    TextStyle(letterSpacing: 7, color: Colors.white, fontSize: 20);
 const signPadding = EdgeInsets.only(right: 17.0, left: 17.0, top: 8, bottom: 8);
 const infoContainers = const EdgeInsets.only(top: 13.0, bottom: 13);
-const curscol=Color(0xFF004C4C);
+const curscol = Color(0xFF004C4C);
 const smallinfoContainer = BoxDecoration(
     gradient: LinearGradient(
         begin: Alignment.topCenter,
@@ -162,6 +162,7 @@ class logoRichText extends StatelessWidget {
     );
   }
 }
+
 //SIGNING BUTTON
 class buttonWidget extends StatelessWidget {
   final String title;
@@ -203,119 +204,165 @@ class settingsButton extends StatefulWidget {
   final String title;
   final bool special;
   final Function on;
-  double contH=0;
-  bool sw=false;
+  double contH = 0;
+  bool sw = false;
   final List<funcAndChild> widgetList;
 
-  settingsButton({Key key, @required this.title,this.widgetList, this.on, this.special=false}) : super(key: key);
+  settingsButton(
+      {Key key,
+      @required this.title,
+      this.widgetList,
+      this.on,
+      this.special = false})
+      : super(key: key);
   @override
   _settingsButtonState createState() => _settingsButtonState();
 }
 
 class _settingsButtonState extends State<settingsButton> {
-
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 25,right: 25),
-
+      padding: const EdgeInsets.only(left: 25, right: 25),
       child: RaisedButton(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         color: Color(0xFF008080),
-        onPressed: !widget.special ? () {}  : widget.on,
-        child:Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        onPressed: !widget.special ? () {} : widget.on,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              AnimatedContainer(duration: Duration(milliseconds: 300),height: !widget.sw ? 0 : 10),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              AnimatedContainer(
+                  duration: Duration(milliseconds: 300),
+                  height: !widget.sw ? 0 : 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(widget.title, style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 18),),
-                  !widget.special ? GestureDetector(
-                    onTap: !widget.special ? () {
-                      setState(() {
-                        if ( widget.sw )
-                          widget.contH =0;
-                        else if ( widget.widgetList != null)
-                          widget.contH = 30;
-                        if (widget.widgetList!=null)
-                          widget.sw = !widget.sw;
-                      });
-                    } : (){},
-                  child: !widget.sw ? Icon(
-                      Icons.navigate_next,
-                      color: Colors.white,
-                    ) :
-                  Transform.rotate(
-                    angle: 90 * math.pi/180,
-                    child: Icon(
-                      Icons.navigate_next,
-                      color: Colors.white,
-                    ),
+                  Text(
+                    widget.title,
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
                   ),
-                  ) : Container()
-                  ],
-              ),
-              widget.widgetList!=null? AnimatedContainer(
-                margin: EdgeInsets.only(left: 10,bottom: widget.sw?10:0),
-                duration: Duration(milliseconds: 300),
-                child: Column(
-                    children: widget.widgetList.map((e) =>
-                      AnimatedContainer(
-                          duration: Duration(milliseconds: 300),
-                          height: widget.contH,
-                          child: widget.sw?
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                e.child,
-                                e.opt==optionType.checkbox ?
-                                GestureDetector(
-                                    child : !e.cond() ? Icon(Icons.check_box, color: Colors.white,) :
-                                    Icon(Icons.check_box_outline_blank_rounded, color: Colors.white),
-                                    onTap: () {
-                                      setState(() {
-                                        e.fun();
-                                      });
-                                    }
-                                ) :
-                                Container(
-                                  decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(Radius.circular(4))),
-                                  padding: EdgeInsets.only(left:5,right:5),
-                                  child: DropdownButton<String>(
-                                    value: e.cond().toString(),
-                                    icon: const Icon(Icons.arrow_drop_down, color: Colors.black,),
-                                    iconSize: 24,
-                                    elevation: 16,
-                                    style: const TextStyle(color: Colors.black),
-                                    underline: Container(
-                                      height: 0,
-                                      color: Colors.black,
-                                    ),
-                                    onChanged: (String newValue) {
-                                      setState(() {
-                                        e.fun(int.parse(newValue));
-                                      });
-                                    },
-                                    items:e.itemList
-                                        .map<DropdownMenuItem<String>>((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),
+                  !widget.special
+                      ? GestureDetector(
+                          onTap: !widget.special
+                              ? () {
+                                  setState(() {
+                                    if (widget.sw)
+                                      widget.contH = 0;
+                                    else if (widget.widgetList != null)
+                                      widget.contH = 30;
+                                    if (widget.widgetList != null)
+                                      widget.sw = !widget.sw;
+                                  });
+                                }
+                              : () {},
+                          child: !widget.sw
+                              ? Icon(
+                                  Icons.navigate_next,
+                                  color: Colors.white,
+                                )
+                              : Transform.rotate(
+                                  angle: 90 * math.pi / 180,
+                                  child: Icon(
+                                    Icons.navigate_next,
+                                    color: Colors.white,
                                   ),
                                 ),
-                              ]
-                          )
-                              :Container()
+                        )
+                      : Container()
+                ],
+              ),
+              widget.widgetList != null
+                  ? AnimatedContainer(
+                      margin:
+                          EdgeInsets.only(left: 10, bottom: widget.sw ? 10 : 0),
+                      duration: Duration(milliseconds: 300),
+                      child: Column(
+                        children: widget.widgetList
+                            .map(
+                              (e) => AnimatedContainer(
+                                  duration: Duration(milliseconds: 300),
+                                  height: widget.contH,
+                                  child: widget.sw
+                                      ? Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                              e.child,
+                                              e.opt == optionType.checkbox
+                                                  ? GestureDetector(
+                                                      child: !e.cond()
+                                                          ? Icon(
+                                                              Icons.check_box,
+                                                              color:
+                                                                  Colors.white,
+                                                            )
+                                                          : Icon(
+                                                              Icons
+                                                                  .check_box_outline_blank_rounded,
+                                                              color:
+                                                                  Colors.white),
+                                                      onTap: () {
+                                                        setState(() {
+                                                          e.fun();
+                                                        });
+                                                      })
+                                                  : Container(
+                                                      decoration: BoxDecoration(
+                                                          color: Colors.white,
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          4))),
+                                                      padding: EdgeInsets.only(
+                                                          left: 5, right: 5),
+                                                      child: DropdownButton<
+                                                          String>(
+                                                        value:
+                                                            e.cond().toString(),
+                                                        icon: const Icon(
+                                                          Icons.arrow_drop_down,
+                                                          color: Colors.black,
+                                                        ),
+                                                        iconSize: 24,
+                                                        elevation: 16,
+                                                        style: const TextStyle(
+                                                            color:
+                                                                Colors.black),
+                                                        underline: Container(
+                                                          height: 0,
+                                                          color: Colors.black,
+                                                        ),
+                                                        onChanged:
+                                                            (String newValue) {
+                                                          setState(() {
+                                                            e.fun(int.parse(
+                                                                newValue));
+                                                          });
+                                                        },
+                                                        items: e.itemList.map<
+                                                            DropdownMenuItem<
+                                                                String>>((String
+                                                            value) {
+                                                          return DropdownMenuItem<
+                                                              String>(
+                                                            value: value,
+                                                            child: Text(value),
+                                                          );
+                                                        }).toList(),
+                                                      ),
+                                                    ),
+                                            ])
+                                      : Container()),
+                            )
+                            .toList(),
                       ),
-                    ).toList(),
-                ),
-                ) : Container(),
-            ]
-        ),
+                    )
+                  : Container(),
+            ]),
       ),
     );
   }
@@ -329,7 +376,8 @@ class signUpRichText extends StatelessWidget {
   const signUpRichText({
     Key key,
     @required this.title,
-    @required this.onTap, this.text = "Don't Have An Account? ",
+    @required this.onTap,
+    this.text = "Don't Have An Account? ",
   }) : super(key: key);
 
   @override
@@ -349,48 +397,44 @@ class signUpRichText extends StatelessWidget {
   }
 }
 
-
 //FLOATINGBAR1
 Widget buildFloatingBar() {
-  return
-    CustomNavigationBar(
-      iconSize: 30.0,
+  return CustomNavigationBar(
+    iconSize: 30.0,
 // selectedColor: Color(0xff0c18fb),
 // strokeColor: Color(0x300c18fb),
-      unSelectedColor: Colors.grey[600],
-      backgroundColor: Color(0xFF006666),
-      borderRadius: Radius.circular(20.0),
+    unSelectedColor: Colors.grey[600],
+    backgroundColor: Color(0xFF006666),
+    borderRadius: Radius.circular(20.0),
 
-      items: [
-        CustomNavigationBarItem(
-          icon: Icon(
-            Icons.favorite,
-            color: Colors.white,
-          ),
+    items: [
+      CustomNavigationBarItem(
+        icon: Icon(
+          Icons.favorite,
+          color: Colors.white,
         ),
-        CustomNavigationBarItem(
-          icon: Icon(
-            Icons.audiotrack,
-            color: Colors.white,
-          ),
+      ),
+      CustomNavigationBarItem(
+        icon: Icon(
+          Icons.audiotrack,
+          color: Colors.white,
         ),
-        CustomNavigationBarItem(
-          icon: Icon(
-            Icons.beach_access,
-            color: Colors.white,
-          ),
+      ),
+      CustomNavigationBarItem(
+        icon: Icon(
+          Icons.beach_access,
+          color: Colors.white,
         ),
-      ],
+      ),
+    ],
 // currentIndex: _currentIndex,
 // onTap: (index) {
 //   setState(() {
 //     _currentIndex = index;
 //   });
 // },
-      isFloating: true,
-    );
-
-
+    isFloating: true,
+  );
 }
 
 //SNAKEBAR CONSTANTS
@@ -403,7 +447,7 @@ SnakeShape snakeShape = SnakeShape.circle;
 bool showSelectedLabels = false;
 bool showUnselectedLabels = false;
 Color selectedColor = Colors.black;
-List<BottomNavigationBarItem> items=[
+List<BottomNavigationBarItem> items = [
   const BottomNavigationBarItem(
       icon: Icon(Icons.calendar_today), label: 'tickets'),
   const BottomNavigationBarItem(
@@ -412,20 +456,18 @@ List<BottomNavigationBarItem> items=[
       icon: Icon(Icons.home_filled), label: 'calendar'),
   const BottomNavigationBarItem(
       icon: Icon(Icons.music_note), label: 'calendar'),
-  const BottomNavigationBarItem(
-      icon: Icon(Icons.settings), label: 'calendar'),
+  const BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'calendar'),
 ];
 
 //SNAKEBAR
-Widget snakebar(Function ontap, int pos){
-
-  return  SnakeNavigationBar.color(
+Widget snakebar(Function ontap, int pos) {
+  return SnakeNavigationBar.color(
     backgroundColor: Color(0xFF027e7e),
     behaviour: snakeBarStyle,
     snakeShape: snakeShape,
     shape: bottomBarShape,
     padding: padding,
-    snakeViewColor:Color(0xFFEFEFEF) ,
+    snakeViewColor: Color(0xFFEFEFEF),
     selectedItemColor: Color(0xFF006666),
     unselectedItemColor: Colors.white,
     showUnselectedLabels: showUnselectedLabels,
@@ -438,38 +480,24 @@ Widget snakebar(Function ontap, int pos){
   );
 }
 
-
-
-
-
 User user;
 
 //UpdateTask
 void updateCount(int updatedValue, String id) {
-
   Database.updateTask(id, {
     'counter': updatedValue,
   });
 }
+
 void updatePerDayUsage(int updatedValue, String id) {
-
-  Database.updateTask(id, {
-
-    'perday' : updatedValue
-  });
+  Database.updateTask(id, {'perday': updatedValue});
 }
 
-void updateLastLogin( DateTime d, String id )
-{
-  Database.updateTask(id, {
-    'lastLogin' : d.toString()
-  });
+void updateLastLogin(DateTime d, String id) {
+  Database.updateTask(id, {'lastLogin': d.toString()});
 }
-
 
 DateTime selectedDate = DateTime.now();
 final DateFormat formatter = DateFormat('MM-dd-yyyy');
 
 // something like 2013-04-20
-
-

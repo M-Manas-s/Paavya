@@ -26,7 +26,7 @@ class home_Screen extends StatefulWidget {
 }
 
 class _home_ScreenState extends State<home_Screen> {
-  int _selectedItemPosition=2;
+  int _selectedItemPosition = 2;
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   User user;
@@ -35,7 +35,7 @@ class _home_ScreenState extends State<home_Screen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _selectedItemPosition=2;
+    _selectedItemPosition = 2;
     print("Getting user");
     gtUser();
   }
@@ -45,8 +45,7 @@ class _home_ScreenState extends State<home_Screen> {
     if (us != null) {
       user = us;
       print("User $user");
-    }
-    else
+    } else
       print("User null");
   }
 
@@ -72,7 +71,9 @@ class _home_ScreenState extends State<home_Screen> {
                       child: Text(
                         "Naari",
                         style: kheroLogoText.copyWith(
-                            fontSize: 40, color: Colors.white),
+                            fontFamily: "Samarkan",
+                            fontSize: 40,
+                            color: Colors.white),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -103,13 +104,11 @@ class _home_ScreenState extends State<home_Screen> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       "HOME",
-                      style:
-                          TextStyle(letterSpacing: 6, color: Colors.white),
+                      style: TextStyle(letterSpacing: 6, color: Colors.white),
                     ),
                   )
                 ],
               )),
-
           Padding(
             padding: infoContainers,
             child: Align(
@@ -126,7 +125,7 @@ class _home_ScreenState extends State<home_Screen> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: GestureDetector(
-                onTap: (){
+                onTap: () {
                   Navigator.pushNamed(context, counter_Screen.id);
                 },
                 child: Container(
@@ -148,7 +147,6 @@ class _home_ScreenState extends State<home_Screen> {
             child: Align(
               alignment: Alignment.centerRight,
               child: Container(
-
                   height: query.height * 0.2,
                   width: query.width * 0.95,
                   decoration:

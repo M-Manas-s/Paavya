@@ -6,8 +6,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'home_Screen_beta.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-
 class SliverHome extends StatefulWidget {
   static String id = "Sliver";
   @override
@@ -15,8 +13,6 @@ class SliverHome extends StatefulWidget {
 }
 
 class _SliverHomeState extends State<SliverHome> {
-
-
   FirebaseAuth _auth = FirebaseAuth.instance;
   SharedPreferences prefs;
 
@@ -27,45 +23,38 @@ class _SliverHomeState extends State<SliverHome> {
     var uid;
 
     FirebaseFirestore.instance
-        .collection('Users').where("Email",
-        isEqualTo: "${
-            user.email
-        }")
+        .collection('Users')
+        .where("Email", isEqualTo: "${user.email}")
         .get()
         .then((QuerySnapshot querySnapshot) {
       querySnapshot.docs.forEach((doc) {
-         String date = doc.data()['lastLogin'];
-        if ( date!=null )
+        String date = doc.data()['lastLogin'];
+        if (date != null)
           dt = DateTime.parse(date);
         else
           dt = null;
-         pads = doc['counter'];
-         perday = doc.data()['perday'];
-         uid = doc.id;
-         if ( dt == null )
-           updateLastLogin(DateTime.now(), uid);
-         else if ( pads!=null && perday!=null )
-         {
-           if ( prefs.getBool('periodBegun') )
-           {
-             pads -= DateTime.now().difference(dt).inDays*perday;
-             pads = pads<0?0:pads;
-             print("New count : $pads");
-             updateCount(pads, uid);
-             if ( pads<5 )
-               sendLowPadNotif();
-           }
-         }
-         updateLastLogin(DateTime.now(), uid);
+        pads = doc['counter'];
+        perday = doc.data()['perday'];
+        uid = doc.id;
+        if (dt == null)
+          updateLastLogin(DateTime.now(), uid);
+        else if (pads != null && perday != null) {
+          if (prefs.getBool('periodBegun')) {
+            pads -= DateTime.now().difference(dt).inDays * perday;
+            pads = pads < 0 ? 0 : pads;
+            print("New count : $pads");
+            updateCount(pads, uid);
+            if (pads < 5) sendLowPadNotif();
+          }
+        }
+        updateLastLogin(DateTime.now(), uid);
       });
     });
   }
 
-
-  void getPrefs() async{
+  void getPrefs() async {
     prefs = await SharedPreferences.getInstance();
   }
-
 
   void gtUser() {
     final us = _auth.currentUser;
@@ -80,7 +69,6 @@ class _SliverHomeState extends State<SliverHome> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -93,7 +81,6 @@ class _SliverHomeState extends State<SliverHome> {
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
-
         body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
@@ -109,11 +96,26 @@ class _SliverHomeState extends State<SliverHome> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Hero(
-                              tag: "Logo",
-
-                              child: Image.asset("assets/images/NAARI1.png",scale: 1.5,)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: Text(
+                                "Naari",
+                                style: kheroLogoText.copyWith(
+                                    fontFamily: "Samarkan",
+                                    fontSize: 48,
+                                    color: Colors.white),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
                           ),
+                          // Hero(
+                          //     tag: "Logo",
+                          //     child: Image.asset(
+                          //       "assets/images/NAARI1.png",
+                          //       scale: 1.5,
+                          //     )),
                           // Hero(
                           //   tag: "Logo",
                           //   child: Padding(
@@ -128,39 +130,40 @@ class _SliverHomeState extends State<SliverHome> {
                           //     ),
                           //   ),
                           // ),
-                          FirebaseAuth.instance.currentUser.photoURL !=null ?
-                          Container(
-                            width: 100,
-                            height: 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                  image: NetworkImage(FirebaseAuth.instance.currentUser.photoURL),
-                                  fit: BoxFit.fill
-                              ),
-                            ),
-                          )
-
-                              :CircleAvatar(
-                            radius: 35,
-                            backgroundColor: Colors.white,
-                            child: CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Colors.transparent,
-                              child: Icon(
-                                Icons.person,
-                                size: 60,
-                                color: Color(0xFF004C4C),
-                              ),
+                          FirebaseAuth.instance.currentUser.photoURL != null
+                              ? Container(
+                                  width: 100,
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                        image: NetworkImage(FirebaseAuth
+                                            .instance.currentUser.photoURL),
+                                        fit: BoxFit.fill),
+                                  ),
+                                )
+                              : CircleAvatar(
+                                  radius: 35,
+                                  backgroundColor: Colors.white,
+                                  child: CircleAvatar(
+                                    radius: 30,
+                                    backgroundColor: Colors.transparent,
+                                    child: Icon(
+                                      Icons.person,
+                                      size: 60,
+                                      color: Color(0xFF004C4C),
+                                    ),
 //                      backgroundImage: NetworkImage("https://i.pinimg.com/280x280_RS/40/e1/2a/40e12afed06fdeda86a4e0aba34137ad.jpg"),
-                            ),
-                          ),
+                                  ),
+                                ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               "Hi ${user.displayName}",
                               style: TextStyle(
-                                  color: Colors.white, fontSize: 26),
+                                color: Colors.white,
+                                fontSize: 26,
+                              ),
                             ),
                           ),
                           sizedbox,
@@ -177,51 +180,52 @@ class _SliverHomeState extends State<SliverHome> {
                 )),
             SliverList(
                 delegate: SliverChildListDelegate([
-
-                  Padding(
-                    padding: infoContainers,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
+              Padding(
+                padding: infoContainers,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    height: query.height * 0.2,
+                    width: query.width * 0.95,
+                    decoration: smallinfoContainer,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: infoContainers,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return navBar(
+                          pageid: 1,
+                        );
+                      }));
+                    },
+                    child: Container(
                         height: query.height * 0.2,
                         width: query.width * 0.95,
-                        decoration: smallinfoContainer,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: infoContainers,
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context){
-                            return navBar(pageid: 1,);
-                          }));
-                        },
-                        child: Container(
-                            height: query.height * 0.2,
-                            width: query.width * 0.95,
-                            decoration: smallinfoContainer.copyWith(
-                                color: Color.fromRGBO(0, 76, 76, 100),
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(100),
-                                    bottomRight: Radius.circular(100)))
+                        decoration: smallinfoContainer.copyWith(
+                            color: Color.fromRGBO(0, 76, 76, 100),
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(100),
+                                bottomRight: Radius.circular(100)))
 //
 
                         ),
-                      ),
-                    ),
                   ),
-                  Padding(
-                    padding: infoContainers,
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Container(
-
-                          height: query.height * 0.2,
-                          width: query.width * 0.95,
-                          decoration:
+                ),
+              ),
+              Padding(
+                padding: infoContainers,
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                      height: query.height * 0.2,
+                      width: query.width * 0.95,
+                      decoration:
                           smallinfoContainer.copyWith(color: Color(0xFFF56A82))
 //              BoxDecoration(
 //                  color: Color(0xFFF56A82),
@@ -231,18 +235,12 @@ class _SliverHomeState extends State<SliverHome> {
 //              ),
 
                       ),
-                    ),
-                  ),
-
-                ]))
+                ),
+              ),
+            ]))
           ],
         ),
       ),
     );
   }
 }
-
-
-
-
-
