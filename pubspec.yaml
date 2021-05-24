@@ -108,6 +108,9 @@ flutter:
     - family: MyFlutterApp
       fonts:
         - asset: fonts/MyFlutterApp.ttf
+    - family: padIcon
+      fonts:
+        - asset: fonts/padIcon.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

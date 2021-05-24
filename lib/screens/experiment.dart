@@ -84,110 +84,153 @@ class _SliverHomeState extends State<SliverHome> {
         body: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
-                automaticallyImplyLeading: false,
-                backgroundColor: Colors.transparent,
-                pinned: false,
-                expandedHeight: MediaQuery.of(context).size.height * 0.35,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: Container(
-                      margin: const EdgeInsets.only(bottom: 50),
-                      height: query.height * 0.3,
-                      decoration: infoContainer,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
-                            child: Material(
-                              color: Colors.transparent,
-                              child: Text(
-                                "Naari",
-                                style: kheroLogoText.copyWith(
-                                    fontFamily: "Samarkan",
-                                    fontSize: 48,
-                                    color: Colors.white),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.transparent,
+              pinned: false,
+              expandedHeight: MediaQuery.of(context).size.height * 0.45,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  height: query.height * 0.3,
+                  decoration: infoContainer,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 16, 0, 0),
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Text(
+                            "Naari",
+                            style: kheroLogoText.copyWith(
+                                fontFamily: "Samarkan",
+                                fontSize: 48,
+                                color: Colors.white),
+                            textAlign: TextAlign.center,
                           ),
-                          // Hero(
-                          //     tag: "Logo",
-                          //     child: Image.asset(
-                          //       "assets/images/NAARI1.png",
-                          //       scale: 1.5,
-                          //     )),
-                          // Hero(
-                          //   tag: "Logo",
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(8.0),
-                          //     child: Material(
-                          //       color: Colors.transparent,
-                          //       child: Text(
-                          //         "Naari",
-                          //         style: headingStyle.copyWith(fontSize: 40),
-                          //         textAlign: TextAlign.center,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
-                          FirebaseAuth.instance.currentUser.photoURL != null
-                              ? Container(
-                                  width: 100,
-                                  height: 100,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                        image: NetworkImage(FirebaseAuth
-                                            .instance.currentUser.photoURL),
-                                        fit: BoxFit.fill),
-                                  ),
-                                )
-                              : CircleAvatar(
-                                  radius: 35,
-                                  backgroundColor: Colors.white,
-                                  child: CircleAvatar(
-                                    radius: 30,
-                                    backgroundColor: Colors.transparent,
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 60,
-                                      color: Color(0xFF004C4C),
-                                    ),
-//                      backgroundImage: NetworkImage("https://i.pinimg.com/280x280_RS/40/e1/2a/40e12afed06fdeda86a4e0aba34137ad.jpg"),
-                                  ),
+                        ),
+                      ),
+                      // Hero(
+                      //     tag: "Logo",
+                      //     child: Image.asset(
+                      //       "assets/images/NAARI1.png",
+                      //       scale: 1.5,
+                      //     )),
+                      // Hero(
+                      //   tag: "Logo",
+                      //   child: Padding(
+                      //     padding: const EdgeInsets.all(8.0),
+                      //     child: Material(
+                      //       color: Colors.transparent,
+                      //       child: Text(
+                      //         "Naari",
+                      //         style: headingStyle.copyWith(fontSize: 40),
+                      //         textAlign: TextAlign.center,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
+                      FirebaseAuth.instance.currentUser.photoURL != null
+                          ? Container(
+                              width: 100,
+                              height: 100,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                    image: NetworkImage(FirebaseAuth
+                                        .instance.currentUser.photoURL),
+                                    fit: BoxFit.fill),
+                              ),
+                            )
+                          : CircleAvatar(
+                              radius: 35,
+                              backgroundColor: Colors.white,
+                              child: CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.transparent,
+                                child: Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: Color(0xFF004C4C),
                                 ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Hi ${user.displayName}",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 26,
                               ),
                             ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "Hi ${user.displayName}",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 26,
                           ),
-                          sizedbox,
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "HOME",
-                              style: TextStyle(
-                                  letterSpacing: 6, color: Colors.white),
-                            ),
-                          )
-                        ],
-                      )),
-                )),
+                        ),
+                      ),
+                      sizedbox,
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "HOME",
+                          style:
+                              TextStyle(letterSpacing: 6, color: Colors.white),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
             SliverList(
                 delegate: SliverChildListDelegate([
               Padding(
                 padding: infoContainers,
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: Container(
-                    height: query.height * 0.2,
-                    width: query.width * 0.95,
-                    decoration: smallinfoContainer,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return navBar(
+                              pageid: 0,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      child: Row(
+                        children: [
+                          Expanded(
+                              flex: 1,
+                              child: SizedBox(
+                                width: 5,
+                              )),
+                          Expanded(
+                            flex: 4,
+                            child: Text(
+                              'Period Tracker',
+                              style: kheroLogoText.copyWith(
+                                  color: Colors.white, fontSize: 18),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Expanded(
+                              flex: 3,
+                              child: Image(
+                                image: AssetImage("assets/images/mascot.png"),
+                              )),
+                          // Expanded(
+                          //     flex: 1,
+                          //     child: SizedBox(
+                          //       width: 5,
+                          //     )),
+                        ],
+                      ),
+                      height: query.height * 0.2,
+                      width: query.width * 0.95,
+                      decoration: smallinfoContainer,
+                    ),
                   ),
                 ),
               ),
@@ -197,24 +240,56 @@ class _SliverHomeState extends State<SliverHome> {
                   alignment: Alignment.centerLeft,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return navBar(
-                          pageid: 1,
-                        );
-                      }));
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return navBar(
+                              pageid: 1,
+                            );
+                          },
+                        ),
+                      );
                     },
                     child: Container(
-                        height: query.height * 0.2,
-                        width: query.width * 0.95,
-                        decoration: smallinfoContainer.copyWith(
-                            color: Color.fromRGBO(0, 76, 76, 100),
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(100),
-                                bottomRight: Radius.circular(100)))
-//
-
+                      child: Row(
+                        children: [
+                          Expanded(
+                              flex: 1,
+                              child: SizedBox(
+                                width: 5,
+                              )),
+                          Expanded(
+                              flex: 3,
+                              child: Image(
+                                image: AssetImage("assets/images/mascot.png"),
+                              )),
+                          Expanded(
+                            flex: 4,
+                            child: Text(
+                              'Pad Counter',
+                              style: kheroLogoText.copyWith(
+                                  color: Colors.white, fontSize: 18),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          Expanded(
+                              flex: 1,
+                              child: SizedBox(
+                                width: 5,
+                              )),
+                        ],
+                      ),
+                      height: query.height * 0.2,
+                      width: query.width * 0.95,
+                      decoration: smallinfoContainer.copyWith(
+                        // color: Color.fromRGBO(0, 76, 76, 100),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(100),
+                          bottomRight: Radius.circular(100),
                         ),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -222,21 +297,58 @@ class _SliverHomeState extends State<SliverHome> {
                 padding: infoContainers,
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: Container(
-                      height: query.height * 0.2,
-                      width: query.width * 0.95,
-                      decoration:
-                          smallinfoContainer.copyWith(color: Color(0xFFF56A82))
-//              BoxDecoration(
-//                  color: Color(0xFFF56A82),
-//                  borderRadius: BorderRadius.only(topLeft: Radius.circular(100),
-//                      bottomLeft: Radius
-//                          .circular(100))
-//              ),
-
-                      ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return navBar(
+                              pageid: 3,
+                            );
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                        child: Row(
+                          children: [
+                            Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  width: 5,
+                                )),
+                            Expanded(
+                              flex: 4,
+                              child: Text(
+                                'Podcasts',
+                                style: kheroLogoText.copyWith(
+                                    color: Colors.white, fontSize: 18),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                                flex: 3,
+                                child: Image(
+                                  image: AssetImage("assets/images/mascot.png"),
+                                )),
+                            Expanded(
+                                flex: 1,
+                                child: SizedBox(
+                                  width: 5,
+                                )),
+                          ],
+                        ),
+                        height: query.height * 0.2,
+                        width: query.width * 0.95,
+                        decoration: smallinfoContainer.copyWith(
+                            color: Color(0xFFF56A82))),
+                  ),
                 ),
               ),
+              SizedBox(
+                height: query.height * 0.1,
+              )
             ]))
           ],
         ),

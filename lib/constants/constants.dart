@@ -87,6 +87,7 @@ const kTextStylee = InputDecoration(
 );
 const kheroLogoText = TextStyle(
     color: Color(0xFFA03FE4),
+    fontFamily: "MyFlutterApp",
     fontSize: 40,
     fontWeight: FontWeight.w700,
     decoration: TextDecoration.none,
