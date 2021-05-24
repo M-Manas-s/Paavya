@@ -17,8 +17,11 @@ import 'Database.dart';
 //CONSTANTS
 
 const indicatorColor = AlwaysStoppedAnimation<Color>(Color(0xFF004C4C));
-const headingStyle =
-    TextStyle(letterSpacing: 7, color: Colors.white, fontSize: 20);
+const headingStyle = TextStyle(
+    letterSpacing: 7,
+    color: Colors.white,
+    fontSize: 20,
+    fontFamily: "MyFlutterApp");
 const signPadding = EdgeInsets.only(right: 17.0, left: 17.0, top: 8, bottom: 8);
 const infoContainers = const EdgeInsets.only(top: 13.0, bottom: 13);
 const curscol = Color(0xFF004C4C);

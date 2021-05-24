@@ -55,10 +55,13 @@ class _registration_ScreenState extends State<registration_Screen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Hero(
-                              tag: "Logo",
-
-                              child: Image.asset("assets/images/NAARI5.png",scale: 3,)
+                          Text(
+                            "Naari",
+                            style: kheroLogoText.copyWith(
+                                fontFamily: "Samarkan",
+                                fontSize: 48,
+                                color: Colors.white),
+                            textAlign: TextAlign.center,
                           ),
                           // Hero(
                           //   tag: "Logo",
@@ -129,7 +132,7 @@ class _registration_ScreenState extends State<registration_Screen> {
                                 cursorColor: curscol,
                                 textAlign: TextAlign.center,
                                 decoration:
-                                kTextStyle.copyWith(hintText: "Email"),
+                                    kTextStyle.copyWith(hintText: "Email"),
                                 validator: emailChecker),
                           ),
                           sizedbox,
@@ -181,8 +184,8 @@ class _registration_ScreenState extends State<registration_Screen> {
                                   spinner = true;
                                 });
                                 var newuser =
-                                await auth.createUserWithEmailAndPassword(
-                                    email: email, password: password);
+                                    await auth.createUserWithEmailAndPassword(
+                                        email: email, password: password);
 //                                UserUpdateInfo updateInfo = UserUpdateInfo();
 //                                updateInfo.displayName = _usernameController.text;
 //                                user.updateProfile(updateInfo);
@@ -190,17 +193,19 @@ class _registration_ScreenState extends State<registration_Screen> {
                                     .updateProfile(displayName: fullName);
                                 FirebaseFirestore.instance
                                     .collection('Users')
-                                    .add({'Full Name': "$fullName",
+                                    .add({
+                                  'Full Name': "$fullName",
                                   "Username": "$userName",
-                                  "Mobile no." : number,
-                                  "Email" : email,
-                                  "counter":0,
+                                  "Mobile no.": number,
+                                  "Email": email,
+                                  "counter": 0,
                                   "lastLogin": DateTime.now().toString(),
-                                  "perday":0
+                                  "perday": 0
                                 });
-                                SharedPreferences prefs = await SharedPreferences.getInstance();
+                                SharedPreferences prefs =
+                                    await SharedPreferences.getInstance();
                                 prefs.setString('email', '$email');
-                                prefs.setBool('periodBegun',false);
+                                prefs.setBool('periodBegun', false);
                                 if (newuser != null) {
                                   Navigator.pushNamed(context, navBar.id);
                                 }
@@ -228,12 +233,12 @@ class _registration_ScreenState extends State<registration_Screen> {
               ),
               Expanded(
                   child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.all(13.0),
-                      child: logoRichText(),
-                    ),
-                  ))
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(13.0),
+                  child: logoRichText(),
+                ),
+              ))
             ],
           ),
         ),

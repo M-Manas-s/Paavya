@@ -218,7 +218,7 @@ class _SliverHomeState extends State<SliverHome> {
                           Expanded(
                               flex: 3,
                               child: Image(
-                                image: AssetImage("assets/images/mascot.png"),
+                                image: AssetImage("assets/images/calendar.png"),
                               )),
                           // Expanded(
                           //     flex: 1,
@@ -262,10 +262,15 @@ class _SliverHomeState extends State<SliverHome> {
                           Expanded(
                               flex: 3,
                               child: Image(
-                                image: AssetImage("assets/images/mascot.png"),
+                                image: AssetImage("assets/images/counter.png"),
                               )),
                           Expanded(
-                            flex: 4,
+                              flex: 1,
+                              child: SizedBox(
+                                width: 5,
+                              )),
+                          Expanded(
+                            flex: 5,
                             child: Text(
                               'Pad Counter',
                               style: kheroLogoText.copyWith(
@@ -330,7 +335,8 @@ class _SliverHomeState extends State<SliverHome> {
                             Expanded(
                                 flex: 3,
                                 child: Image(
-                                  image: AssetImage("assets/images/mascot.png"),
+                                  image:
+                                      AssetImage("assets/images/podcast.png"),
                                 )),
                             Expanded(
                                 flex: 1,

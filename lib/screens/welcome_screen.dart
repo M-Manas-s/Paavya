@@ -5,12 +5,11 @@ import 'package:naariAndroid/constants/constants.dart';
 import 'package:naariAndroid/screens/sign_Screen.dart';
 
 class welcome_Screen extends StatelessWidget {
-
   static String id = "welcome_screen";
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.pushNamedAndRemoveUntil(context, sign_Screen.id, (r)=>false);
+      Navigator.pushNamedAndRemoveUntil(context, sign_Screen.id, (r) => false);
     });
 
     return Scaffold(
@@ -25,8 +24,7 @@ class welcome_Screen extends StatelessWidget {
                   tag: "cont",
                   child: Container(
                     decoration: new BoxDecoration(
-
-                      gradient:     LinearGradient(
+                      gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [Color(0xFFB1D8D8), Color(0xFF79B7B7)]),
@@ -39,8 +37,6 @@ class welcome_Screen extends StatelessWidget {
               ],
             ),
           ),
-
-
           Expanded(
             child: Container(
               child: Column(
@@ -51,10 +47,13 @@ class welcome_Screen extends StatelessWidget {
                     color: Color(0xFF004C4C),
                     size: 30.0,
                   ),
-                  Hero(
-                      tag: "Logo",
-
-                      child: Image.asset("assets/images/NAARI.png",scale: 1.6,)
+                  Text(
+                    "Naari",
+                    style: kheroLogoText.copyWith(
+                        fontFamily: "Samarkan",
+                        fontSize: 48,
+                        color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
                   // Hero(
                   //   tag: "Logo",
