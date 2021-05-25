@@ -43,15 +43,19 @@ class _registration_ScreenState extends State<registration_Screen> {
         resizeToAvoidBottomInset: false,
         body: Form(
           key: _formKey,
-          child: Stack(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(
+                height: 10,
+              ),
               Expanded(
-                flex: 6,
+                flex: 10,
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -174,7 +178,7 @@ class _registration_ScreenState extends State<registration_Screen> {
                             ),
                           ),
                           SizedBox(
-                            height: 20,
+                            height: 10,
                           ),
                           buttonWidget(
                             title: "Register",
@@ -235,7 +239,7 @@ class _registration_ScreenState extends State<registration_Screen> {
                   child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Padding(
-                  padding: const EdgeInsets.all(13.0),
+                  padding: const EdgeInsets.all(8.0),
                   child: logoRichText(),
                 ),
               ))
