@@ -73,8 +73,8 @@ class _sign_ScreenState extends State<sign_Screen> {
                                   "Naari",
                                   style: kheroLogoText.copyWith(
                                       fontFamily: "Samarkan",
-                                      fontSize: 48,
-                                      color: Colors.white),
+                                      fontSize: 52,
+                                      color: Colors.black),
                                   textAlign: TextAlign.center,
                                 ),
                                 // Hero(

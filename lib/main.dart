@@ -36,8 +36,7 @@ Future<void> main() async {
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
         accentColor: Color(0xFF8CC4C4)),
-    home:
-    email != null ? navBar() : welcome_Screen(),
+    home: email != null ? navBar() : welcome_Screen(),
     routes: {
       welcome_Screen.id: (context) => welcome_Screen(),
       sign_Screen.id: (context) => sign_Screen(),

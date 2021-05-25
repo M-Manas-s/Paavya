@@ -20,17 +20,22 @@ class welcome_Screen extends StatelessWidget {
             child: Stack(
               children: [
                 Container(),
-                Hero(
-                  tag: "cont",
+                Container(
                   child: Container(
+                    alignment: Alignment.center,
+                    child: Image(
+                        image: AssetImage("assets/images/mascot.png"),
+                        height: MediaQuery.of(context).size.height - 200,
+                        alignment: Alignment.center),
                     decoration: new BoxDecoration(
                       gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [Color(0xFFB1D8D8), Color(0xFF79B7B7)]),
                       borderRadius: BorderRadius.vertical(
-                          bottom: Radius.elliptical(
-                              MediaQuery.of(context).size.width, 330.0)),
+                        bottom: Radius.elliptical(
+                            MediaQuery.of(context).size.width, 330.0),
+                      ),
                     ),
                   ),
                 ),
@@ -52,20 +57,9 @@ class welcome_Screen extends StatelessWidget {
                     style: kheroLogoText.copyWith(
                         fontFamily: "Samarkan",
                         fontSize: 48,
-                        color: Colors.white),
+                        color: Colors.black),
                     textAlign: TextAlign.center,
                   ),
-                  // Hero(
-                  //   tag: "Logo",
-                  //
-                  //   child: Material(
-                  //     color: Colors.transparent,
-                  //     child: Text(
-                  //       "NAARI",
-                  //       style: kheroLogoText.copyWith(fontSize: 40, color: Color(0xFF004C4C)),
-                  //     ),
-                  //   ),
-                  // ),
                   logoRichText()
                 ],
               ),

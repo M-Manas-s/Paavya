@@ -262,6 +262,7 @@ class _SliverHomeState extends State<SliverHome> {
                           Expanded(
                               flex: 3,
                               child: Image(
+                                height: query.height / 8,
                                 image: AssetImage("assets/images/counter.png"),
                               )),
                           Expanded(

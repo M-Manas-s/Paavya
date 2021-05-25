@@ -60,7 +60,7 @@ class _registration_ScreenState extends State<registration_Screen> {
                             style: kheroLogoText.copyWith(
                                 fontFamily: "Samarkan",
                                 fontSize: 48,
-                                color: Colors.white),
+                                color: Colors.black),
                             textAlign: TextAlign.center,
                           ),
                           // Hero(
@@ -76,7 +76,7 @@ class _registration_ScreenState extends State<registration_Screen> {
                           //   ),
                           // ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.05,
+                            height: MediaQuery.of(context).size.height * 0.02,
                           ),
                           Padding(
                             padding: signPadding,

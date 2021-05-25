@@ -38,7 +38,7 @@ class _CalendarPageState extends State<CalendarPage> {
   int diff = 0;
   SharedPreferences prefs;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
-  bool cycleOnset=false;
+  bool cycleOnset = false;
 
   @override
   void initState() {
@@ -54,7 +54,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   getDates() async {
     prefs = await SharedPreferences.getInstance();
-    cycleOnset = prefs.getBool("periodBegun")??false;
+    cycleOnset = prefs.getBool("periodBegun") ?? false;
     String ts = "", s1 = "", s2 = "";
     s1 = prefs.getString("d1") ?? "";
     s2 = prefs.getString("d2") ?? "";
@@ -78,7 +78,6 @@ class _CalendarPageState extends State<CalendarPage> {
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
       helpText: 'Select  Date',
-
       cancelText: 'Cancel',
       confirmText: 'Set',
       builder: (BuildContext context, Widget child) {
@@ -104,7 +103,7 @@ class _CalendarPageState extends State<CalendarPage> {
       appBar: PreferredSize(
         preferredSize: Size(double.infinity, 100),
         child: Container(
-          margin: const EdgeInsets.only(bottom: 0),
+          margin: const EdgeInsets.only(bottom: 5),
           height: query.height,
           decoration: infoContainer,
           child: Center(
@@ -139,10 +138,11 @@ class _CalendarPageState extends State<CalendarPage> {
                     child: Text(
                       "Your Calendar",
                       style: headingStyle.copyWith(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E7777),
-                          letterSpacing: 1,),
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E7777),
+                        letterSpacing: 1,
+                      ),
                     ),
                   )),
               Expanded(
@@ -262,7 +262,7 @@ class _CalendarPageState extends State<CalendarPage> {
                           fontSize: 14, color: Color(0xFF535050))),
                 ),
                 SizedBox(
-                  height: 30,
+                  height: 10, //,
                 ),
                 Text("Last but one period was on",
                     style: kheroLogoText.copyWith(
@@ -289,8 +289,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       prefs.setString(
                           "d1", DateFormat("yyyy-MM-dd").format(d1));
                     });
-                    if (prefs.getBool('periodReminder'))
-                      cycleBeginNotif();
+                    if (prefs.getBool('periodReminder')) cycleBeginNotif();
                   },
                   child: Text(
                     "Callibrate date",
@@ -298,7 +297,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         fontSize: 15, color: Color(0xFF535050)),
                   ),
                 ),
-                SizedBox(height: 35),
+                SizedBox(height: 10),
                 Text("Last period was on",
                     style: kheroLogoText.copyWith(
                         fontSize: 14, color: Color(0xFF535050))),
@@ -324,8 +323,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       prefs.setString(
                           "d2", DateFormat("yyyy-MM-dd").format(d2));
                     });
-                    if (prefs.getBool('periodReminder'))
-                      cycleBeginNotif();
+                    if (prefs.getBool('periodReminder')) cycleBeginNotif();
                   },
                   child: Text(
                     "Callibrate date",
@@ -333,15 +331,14 @@ class _CalendarPageState extends State<CalendarPage> {
                         fontSize: 15, color: Color(0xFF535050)),
                   ),
                 ),
-                SizedBox(height: 50),
+                SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {
                     setState(() {
-                      cycleOnset=!cycleOnset;
+                      cycleOnset = !cycleOnset;
                     });
                     prefs.setBool("periodBegun", cycleOnset);
-                    if ( cycleOnset==false )
-                      cancelNotif();
+                    if (cycleOnset == false) cancelNotif();
                   },
                   child: Container(
                     padding: EdgeInsets.all(15),
@@ -350,7 +347,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       borderRadius: BorderRadius.all(Radius.circular(10.0)),
                     ),
                     child: Text(
-                      cycleOnset?"My cycle has Ended":"My cycle has Begun",
+                      cycleOnset ? "My cycle has Ended" : "My cycle has Begun",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),

@@ -11,10 +11,7 @@ bool padReminder;
 bool periodReminder;
 int periodRemDay;
 
-enum optionType{
-  checkbox,
-  dropDownList
-}
+enum optionType { checkbox, dropDownList }
 
 class funcAndChild {
   final Function fun;
@@ -23,7 +20,12 @@ class funcAndChild {
   final optionType opt;
   final List<String> itemList;
 
-  funcAndChild({@required this.child, @required this.fun, @required this.cond, @required this.opt, this.itemList});
+  funcAndChild(
+      {@required this.child,
+      @required this.fun,
+      @required this.cond,
+      @required this.opt,
+      this.itemList});
 }
 
 class setting_Screen extends StatefulWidget {
@@ -35,11 +37,10 @@ class _setting_ScreenState extends State<setting_Screen> {
   FirebaseAuth _auth = FirebaseAuth.instance;
   SharedPreferences prefs;
 
-  Future<void> load()
-  async {
+  Future<void> load() async {
     prefs = await SharedPreferences.getInstance();
     padReminder = prefs.getBool('padReminder') ?? true;
-    periodReminder = prefs.getBool('periodReminder') ?? true ;
+    periodReminder = prefs.getBool('periodReminder') ?? true;
     periodRemDay = prefs.getInt('periodRemDay') ?? 7;
   }
 
@@ -72,9 +73,6 @@ class _setting_ScreenState extends State<setting_Screen> {
               height: MediaQuery.of(context).size.height * 0.08,
             ),
             settingsButton(
-              title: "Profile Settings",
-            ),
-            settingsButton(
               title: "Notification Settings",
               widgetList: [
                 funcAndChild(
@@ -99,48 +97,32 @@ class _setting_ScreenState extends State<setting_Screen> {
                   ),
                   fun: () {
                     periodReminder = !periodReminder;
-                    prefs.setBool('periodReminder',periodReminder);
-                    if ( periodReminder )
-                        cycleBeginNotif();
+                    prefs.setBool('periodReminder', periodReminder);
+                    if (periodReminder)
+                      cycleBeginNotif();
                     else
-                        cancelNotif();
+                      cancelNotif();
                   },
                   cond: <bool>() {
                     return periodReminder;
                   },
                 ),
                 funcAndChild(
-                  opt: optionType.dropDownList,
-                  child: Text(
-                    "Period Reminder Frequency",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  fun: (int val) {
-                    periodRemDay = val;
-                    prefs.setInt('periodRemDay', periodRemDay);
-                    cycleBeginNotif();
-                  },
-                  cond: <bool>() {
-                    return periodRemDay;
-                  },
-                  itemList : <String>['7','4','3']
-                )
+                    opt: optionType.dropDownList,
+                    child: Text(
+                      "Period Reminder Frequency",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    fun: (int val) {
+                      periodRemDay = val;
+                      prefs.setInt('periodRemDay', periodRemDay);
+                      cycleBeginNotif();
+                    },
+                    cond: <bool>() {
+                      return periodRemDay;
+                    },
+                    itemList: <String>['7', '4', '3'])
               ],
-            ),
-            settingsButton(
-              title: "Security",
-            ),
-            settingsButton(
-              title: "Privacy",
-            ),
-            settingsButton(
-              title: "About",
-            ),
-            settingsButton(
-              title: "FAQs",
-            ),
-            settingsButton(
-              title: "Contact Us",
             ),
             settingsButton(
               title: "Logout",
