@@ -60,7 +60,7 @@ class _registration_ScreenState extends State<registration_Screen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            "Naari",
+                            "Paavya",
                             style: kheroLogoText.copyWith(
                                 fontFamily: "Samarkan",
                                 fontSize: 48,

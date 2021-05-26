@@ -69,7 +69,7 @@ class _home_ScreenState extends State<home_Screen> {
                     child: Material(
                       color: Colors.transparent,
                       child: Text(
-                        "Naari",
+                        "Paavya",
                         style: kheroLogoText.copyWith(
                             fontFamily: "Samarkan",
                             fontSize: 40,

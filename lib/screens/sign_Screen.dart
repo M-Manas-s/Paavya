@@ -70,7 +70,7 @@ class _sign_ScreenState extends State<sign_Screen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Naari",
+                                  "Paavya",
                                   style: kheroLogoText.copyWith(
                                       fontFamily: "Samarkan",
                                       fontSize: 52,

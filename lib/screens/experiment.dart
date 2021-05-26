@@ -101,7 +101,7 @@ class _SliverHomeState extends State<SliverHome> {
                         child: Material(
                           color: Colors.transparent,
                           child: Text(
-                            "Naari",
+                            "Paavya",
                             style: kheroLogoText.copyWith(
                                 fontFamily: "Samarkan",
                                 fontSize: 48,

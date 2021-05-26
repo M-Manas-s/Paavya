@@ -53,7 +53,7 @@ class welcome_Screen extends StatelessWidget {
                     size: 30.0,
                   ),
                   Text(
-                    "Naari",
+                    "Paavya",
                     style: kheroLogoText.copyWith(
                         fontFamily: "Samarkan",
                         fontSize: 48,
