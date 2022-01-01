@@ -5,7 +5,7 @@ import 'package:naariAndroid/constants/constants.dart';
 import 'package:naariAndroid/screens/calendar_page.dart';
 import 'package:naariAndroid/screens/music_player.dart';
 import 'package:naariAndroid/screens/settings.dart';
-import 'experiment.dart';
+import 'SliverHome.dart';
 import 'padcounter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 

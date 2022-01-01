@@ -176,16 +176,13 @@ class _CalendarPageState extends State<CalendarPage> {
                     prevMonthDayBorderColor: Colors.white24,
                     prevDaysTextStyle: TextStyle(color: Colors.white60),
                     headerTextStyle: TextStyle(color: Colors.white),
-                    headerText: Months[_currentDate.month - 1],
+                    headerText: Months[_currentDate.month -1],
                     iconColor: Colors.white,
                     weekendTextStyle: TextStyle(
                       color: Colors.white,
                     ),
                     thisMonthDayBorderColor: Colors.grey,
-//      weekDays: null, /// for pass null when you do not want to render weekDays
-//      headerText: Container( /// Example for rendering custom header
-//        child: Text('Custom Header'),
-//      ),
+
                     customDayBuilder: (
                       /// you can provide your own build function to make custom day containers
                       bool isSelectable,
@@ -216,8 +213,8 @@ class _CalendarPageState extends State<CalendarPage> {
                           decoration: BoxDecoration(
                               color: Color.fromRGBO(
                                   40,
-                                  170 - 5 * day.difference(next).inDays.abs(),
-                                  170 - 5 * day.difference(next).inDays.abs(),
+                                  170 - 10 * day.difference(next).inDays.abs(),
+                                  170 - 10 * day.difference(next).inDays.abs(),
                                   1),
                               shape: BoxShape.circle,
                               border: Border.all(

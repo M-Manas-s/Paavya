@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:naariAndroid/constants/Database.dart';
 import 'package:naariAndroid/constants/constants.dart';
-import 'package:naariAndroid/screens/experiment.dart';
+import 'package:naariAndroid/screens/SliverHome.dart';
 import 'package:naariAndroid/screens/home_Screen.dart';
 import 'package:naariAndroid/screens/home_Screen_beta.dart';
 import 'package:naariAndroid/screens/padcounter.dart';

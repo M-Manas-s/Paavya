@@ -87,8 +87,10 @@ class _SliverHomeState extends State<SliverHome> {
               automaticallyImplyLeading: false,
               backgroundColor: Colors.transparent,
               pinned: false,
-              expandedHeight: MediaQuery.of(context).size.height * 0.45,
+              stretchTriggerOffset: 100,
+              expandedHeight: MediaQuery.of(context).size.height * 0.5,
               flexibleSpace: FlexibleSpaceBar(
+                collapseMode: CollapseMode.pin,
                 background: Container(
                   margin: const EdgeInsets.only(bottom: 16),
                   height: query.height * 0.3,
@@ -155,6 +157,7 @@ class _SliverHomeState extends State<SliverHome> {
                                 ),
                               ),
                             ),
+                      SizedBox(height: query.height*0.02,),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
@@ -165,15 +168,14 @@ class _SliverHomeState extends State<SliverHome> {
                           ),
                         ),
                       ),
-                      sizedbox,
+                      SizedBox(height: query.height*0.02,),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
                           "HOME",
-                          style:
-                              TextStyle(letterSpacing: 6, color: Colors.white),
+                          style: headingStyle,
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),

@@ -9,7 +9,7 @@ import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 import 'package:intl/intl.dart';
 import 'dart:math' as math;
 import 'package:naariAndroid/constants/my_flutter_app_icons.dart';
-import 'package:naariAndroid/screens/experiment.dart';
+import 'package:naariAndroid/screens/SliverHome.dart';
 import 'package:naariAndroid/screens/settings.dart';
 
 import 'Database.dart';
