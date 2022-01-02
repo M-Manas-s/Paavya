@@ -5,7 +5,6 @@ import 'package:naariAndroid/constants/constants.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'Counter/Main.dart';
 import 'Counter/Setting.dart';
-import 'Counter/Tapp.dart';
 
 enum ThemeStyle {
   Dribbble,
@@ -18,7 +17,6 @@ enum ThemeStyle {
   WithTitle,
   BlurEffect
 }
-
 
 
 class counter_Screen extends StatefulWidget {

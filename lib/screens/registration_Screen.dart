@@ -152,8 +152,7 @@ class _registration_ScreenState extends State<registration_Screen> {
                                     cursorColor: curscol,
                                     textAlign: TextAlign.center,
                                     decoration: kTextStyle.copyWith(
-                                        hintText: "Passwor"
-                                            "d"),
+                                        hintText: "Password"),
                                     validator: passwordValidator),
                                 Positioned(
                                   top: 10,

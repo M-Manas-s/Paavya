@@ -1,10 +1,12 @@
+import 'dart:ffi';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:contained_tab_bar_view/contained_tab_bar_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_calendar_carousel/classes/event.dart';
-import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart'
-    show CalendarCarousel;
+import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart' show CalendarCarousel;
 import 'package:flutter_calendar_carousel/flutter_calendar_carousel.dart';
+import 'package:naariAndroid/class/MLModel.dart';
 import 'package:naariAndroid/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
@@ -17,58 +19,44 @@ class CalendarPage extends StatefulWidget {
 }
 
 var _currentDate = new DateTime.now();
-var Months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-];
+var Months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 class _CalendarPageState extends State<CalendarPage> {
   DateTime d1 = DateTime.now();
-  DateTime d2 = DateTime.now();
-  int diff = 0;
   SharedPreferences prefs;
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
   bool cycleOnset = false;
+  double bmi;
+  double cycleLen;
+  int age;
+  bool loading = true;
 
   @override
   void initState() {
-    getDates();
+    getData();
     super.initState();
   }
 
-  calcDiff() {
-    setState(() {
-      diff = d2.difference(d1).inDays;
-    });
-  }
-
-  getDates() async {
+  getData() async {
     prefs = await SharedPreferences.getInstance();
+    bmi = prefs.getDouble("BMI") ?? 20.0;
+    age = prefs.getInt("Age") ?? 25;
+    cycleLen = prefs.getDouble("CycleLength") ?? 28.0;
     cycleOnset = prefs.getBool("periodBegun") ?? false;
-    String ts = "", s1 = "", s2 = "";
+    String ts = "", s1 = "";
     s1 = prefs.getString("d1") ?? "";
-    s2 = prefs.getString("d2") ?? "";
+    // s2 = prefs.getString("d2") ?? "";
 
     if (s1 == "") {
       d1 = DateTime.now();
-      d2 = d1;
-      return;
+      // d2 = d1;
     }
     setState(() {
       d1 = DateTime.parse(s1);
-      d2 = DateTime.parse(s2);
+      loading = false;
+      // d2 = DateTime.parse(s2);
     });
-    calcDiff();
+    // calcDiff();
   }
 
   selectDate(BuildContext context) async {
@@ -125,8 +113,7 @@ class _CalendarPageState extends State<CalendarPage> {
               borderColor: Colors.transparent,
             ),
             labelColor: Color(0xFF1E7777),
-            labelStyle: headingStyle.copyWith(
-                fontSize: 18, fontWeight: FontWeight.bold),
+            labelStyle: headingStyle.copyWith(fontSize: 18, fontWeight: FontWeight.bold),
             unselectedLabelStyle: TextStyle(fontSize: 15),
             unselectedLabelColor: Color(0xFF8CC4C4)),
         views: [
@@ -149,10 +136,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 flex: 21,
                 child: Container(
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Color(0xFF006F6F), Color(0xFF00AAAA)]),
+                    gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF006F6F), Color(0xFF00AAAA)]),
                     borderRadius: BorderRadius.circular(40),
                   ),
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
@@ -176,7 +160,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     prevMonthDayBorderColor: Colors.white24,
                     prevDaysTextStyle: TextStyle(color: Colors.white60),
                     headerTextStyle: TextStyle(color: Colors.white),
-                    headerText: Months[_currentDate.month -1],
+                    headerText: Months[_currentDate.month - 1],
                     iconColor: Colors.white,
                     weekendTextStyle: TextStyle(
                       color: Colors.white,
@@ -198,28 +182,21 @@ class _CalendarPageState extends State<CalendarPage> {
                       /// If you return null, [CalendarCarousel] will build container for current [day] with default function.
                       /// This way you can build custom containers for specific days only, leaving rest as default.
 
-                      DateTime next = d2.add(Duration(days: diff));
-                      if (day.isAfter(next.subtract(Duration(days: 3))) &&
-                          day.isBefore(next.add(Duration(days: 3))))
-                        return Container(
-                          constraints: BoxConstraints.expand(),
-                          child: Center(
-                              child: Text(
-                            "${day.day}",
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          )),
-                          decoration: BoxDecoration(
-                              color: Color.fromRGBO(
-                                  40,
-                                  170 - 10 * day.difference(next).inDays.abs(),
-                                  170 - 10 * day.difference(next).inDays.abs(),
-                                  1),
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                  color: Color.fromRGBO(0, 255, 255, 1))),
-                        );
+                      if (!loading) {
+                        DateTime next = d1.add(Duration(days: cycleLen.round()));
+                        if (day == next)
+                          return Container(
+                            constraints: BoxConstraints.expand(),
+                            child: Center(
+                                child: Text(
+                              "${day.day}",
+                              style: TextStyle(
+                                color: Colors.white,
+                              ),
+                            )),
+                            decoration: BoxDecoration(color: Color.fromRGBO(40, 170, 170, 1), shape: BoxShape.circle, border: Border.all(color: Color.fromRGBO(0, 255, 255, 1))),
+                          );
+                      }
 
                       return null;
                     },
@@ -252,90 +229,187 @@ class _CalendarPageState extends State<CalendarPage> {
               children: [
                 Container(
                   padding: EdgeInsets.only(left: 15, right: 15),
-                  child: Text(
-                      "We will use this data to mark your next period on Calendar",
-                      textAlign: TextAlign.center,
-                      style: kheroLogoText.copyWith(
-                          fontSize: 14, color: Color(0xFF535050))),
+                  child: Text("We will use this data to mark onset of your next cycle on Calendar", textAlign: TextAlign.center, style: kheroLogoText.copyWith(fontSize: 14, color: Color(0xFF535050))),
                 ),
                 SizedBox(
-                  height: 10, //,
+                  height: MediaQuery.of(context).size.width * 0.1, //,
                 ),
-                Text("Last but one period was on",
-                    style: kheroLogoText.copyWith(
-                        fontSize: 14, color: Color(0xFF535050))),
-                Text(" ${d1.day}-${d1.month}-${d1.year}",
-                    style: kheroLogoText.copyWith(
-                        fontSize: 23, color: Color(0xFF535050))),
-                SizedBox(height: 5),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Color(0xFFEFEFEF)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Colors.teal, width: 2),
-                      ))),
-                  onPressed: () async {
-                    DateTime rec = await selectDate(context);
-                    if (rec == null) return;
-                    setState(() {
-                      d1 = rec;
-                      calcDiff();
-                      prefs.setString(
-                          "d1", DateFormat("yyyy-MM-dd").format(d1));
-                    });
-                    if (prefs.getBool('periodReminder')) cycleBeginNotif();
-                  },
-                  child: Text(
-                    "Callibrate date",
-                    style: kheroLogoText.copyWith(
-                        fontSize: 15, color: Color(0xFF535050)),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.1),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "BMI",
+                              style: TextStyle(
+                                color: Colors.teal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                              ),
+                              child: TextFormField(
+                                onChanged: (value) {
+                                  bmi = double.parse(value.trim());
+                                  prefs.setDouble("BMI", bmi);
+                                  calculateAverageAndResetNotif();
+                                },
+                                initialValue: bmi.toString(),
+                                cursorColor: Color(0xFF1F4F99),
+                                textAlign: TextAlign.start,
+                                decoration: InputDecoration(
+                                  focusedBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  fillColor: Color(0xFFD2D2D2),
+                                  filled: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Age",
+                              style: TextStyle(
+                                color: Colors.teal,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 18,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 5,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.all(Radius.circular(5)),
+                              ),
+                              child: TextFormField(
+                                onChanged: (value) {
+                                  age = int.parse(value.trim());
+                                  prefs.setInt("Age", age);
+                                  calculateAverageAndResetNotif();
+                                },
+                                initialValue: age.toString(),
+                                cursorColor: Color(0xFF1F4F99),
+                                textAlign: TextAlign.start,
+                                decoration: InputDecoration(
+                                  focusedBorder: InputBorder.none,
+                                  enabledBorder: InputBorder.none,
+                                  errorBorder: InputBorder.none,
+                                  disabledBorder: InputBorder.none,
+                                  fillColor: Color(0xFFD2D2D2),
+                                  filled: true,
+                                  contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(height: 10),
-                Text("Last period was on",
-                    style: kheroLogoText.copyWith(
-                        fontSize: 14, color: Color(0xFF535050))),
-                Text("${d2.day}-${d2.month}-${d2.year}",
-                    style: kheroLogoText.copyWith(
-                        fontSize: 23, color: Color(0xFF535050))),
-                SizedBox(height: 5),
-                ElevatedButton(
-                  style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.all<Color>(Color(0xFFEFEFEF)),
-                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18.0),
-                        side: BorderSide(color: Colors.teal, width: 2),
-                      ))),
-                  onPressed: () async {
-                    DateTime rec = await selectDate(context);
-                    if (rec == null) return;
-                    setState(() {
-                      d2 = rec;
-                      calcDiff();
-                      prefs.setString(
-                          "d2", DateFormat("yyyy-MM-dd").format(d2));
-                    });
-                    if (prefs.getBool('periodReminder')) cycleBeginNotif();
-                  },
-                  child: Text(
-                    "Callibrate date",
-                    style: kheroLogoText.copyWith(
-                        fontSize: 15, color: Color(0xFF535050)),
-                  ),
+                // Text("Last but one period was on",
+                //     style: kheroLogoText.copyWith(
+                //         fontSize: 14, color: Color(0xFF535050))),
+                // Text(" ${d1.day}-${d1.month}-${d1.year}",
+                //     style: kheroLogoText.copyWith(
+                //         fontSize: 23, color: Color(0xFF535050))),
+                // SizedBox(height: 5),
+                // ElevatedButton(
+                //   style: ButtonStyle(
+                //       backgroundColor:
+                //           MaterialStateProperty.all<Color>(Color(0xFFEFEFEF)),
+                //       shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                //           RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(18.0),
+                //         side: BorderSide(color: Colors.teal, width: 2),
+                //       ))),
+                //   onPressed: () async {
+                //     DateTime rec = await selectDate(context);
+                //     if (rec == null) return;
+                //     setState(() {
+                //       d1 = rec;
+                //       calcDiff();
+                //       prefs.setString(
+                //           "d1", DateFormat("yyyy-MM-dd").format(d1));
+                //     });
+                //     if (prefs.getBool('periodReminder')) cycleBeginNotif();
+                //   },
+                //   child: Text(
+                //     "Callibrate date",
+                //     style: kheroLogoText.copyWith(
+                //         fontSize: 15, color: Color(0xFF535050)),
+                //   ),
+                // ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
+                Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Last cycle onset: ", style: kheroLogoText.copyWith(fontSize: 14, color: Color(0xFF535050))),
+                        Text("${d1.day}-${d1.month}-${d1.year}", style: kheroLogoText.copyWith(fontSize: 20, color: Color(0xFF535050))),
+                      ],
+                    ),
+                    SizedBox(height: 5),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(Color(0xFFEFEFEF)),
+                          shape: MaterialStateProperty.all<RoundedRectangleBorder>(RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(color: Colors.teal, width: 2),
+                          ))),
+                      onPressed: () async {
+                        DateTime rec = await selectDate(context);
+                        if (rec == null) return;
+                        setState(() {
+                          d1 = rec;
+                          prefs.setString("d1", DateFormat("yyyy-MM-dd").format(d1));
+                        });
+                        if (prefs.getBool('periodReminder')) {
+                          cancelNotif();
+                          cycleBeginNotif();
+                        }
+                      },
+                      child: Text(
+                        "Callibrate date",
+                        style: kheroLogoText.copyWith(fontSize: 15, color: Color(0xFF535050)),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 20),
                 GestureDetector(
                   onTap: () {
                     setState(() {
                       cycleOnset = !cycleOnset;
+                      if (cycleOnset)
+                        d1 = DateTime.now();
                     });
                     prefs.setBool("periodBegun", cycleOnset);
-                    if (cycleOnset == false) cancelNotif();
+                    if (!cycleOnset) cancelNotif();
+                    else prefs.setString("d1", DateFormat("yyyy-MM-dd").format(DateTime.now()));
+
                   },
                   child: Container(
                     padding: EdgeInsets.all(15),

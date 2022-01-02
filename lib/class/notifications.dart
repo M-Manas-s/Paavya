@@ -1,12 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:naariAndroid/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-int calcDiff(DateTime d1, DateTime d2) {
-  int diff = d2.difference(d1).inDays;
-  return diff;
+void resetNotifs(){
+  cancelNotif();
+  cycleBeginNotif();
+}
+
+Future<int> calculateFuturePads() async {
+  int pads;
+  int perday;
+
+  await FirebaseFirestore.instance
+      .collection('Users')
+      .where("Email", isEqualTo: "${user.email}")
+      .get()
+      .then((QuerySnapshot querySnapshot) {
+    querySnapshot.docs.forEach((doc) {
+      pads = doc['counter'];
+      perday = doc.data()['perday'];
+    });
+  });
+  return (pads/perday).floor();
 }
 
 Future<void> cancelNotif() async {
@@ -23,8 +42,9 @@ Future<void> cancelNotif() async {
     }
     print(payload);
   });
-
   await flutterLocalNotificationsPlugin.cancelAll();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  if ( prefs.getBool("padReminder") ) sendFutureLowPadNotif();
 }
 
 Future<void> sendLowPadNotif() async {
@@ -56,8 +76,8 @@ Future<void> sendLowPadNotif() async {
       payload: 'item x');
 }
 
-Future<void> sendFutureLowPadNotif(int d) async {
-
+Future<void> sendFutureLowPadNotif() async {
+  int d = await calculateFuturePads();
   FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
   FlutterLocalNotificationsPlugin();
   const AndroidInitializationSettings initializationSettingsAndroid =
@@ -91,20 +111,16 @@ Future<void> cycleBeginNotif() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   DateTime d1 = DateTime.now();
-  DateTime d2 = DateTime.now();
+  double cycleLen;
 
-  String s1 = "", s2 = "";
-  s1 = prefs.getString("d1") ?? "";
-  s2 = prefs.getString("d2") ?? "";
+  String s1 = prefs.getString("d1") ?? "";
+  cycleLen = prefs.getDouble("CycleLength");
 
   if (s1 == "") {
     d1 = DateTime.now();
-    d2 = d1;
     return;
   }
   d1 = DateTime.parse(s1);
-  d2 = DateTime.parse(s2);
-  int diff = calcDiff(d1, d2);
 
   tz.initializeTimeZones();
   tz.setLocalLocation(tz.getLocation('Asia/Kolkata'));
@@ -125,9 +141,9 @@ Future<void> cycleBeginNotif() async {
   await flutterLocalNotificationsPlugin.cancelAll();
 
   tz.TZDateTime scheduledDate =
-      tz.TZDateTime(tz.local, d2.year, d2.month, d2.day, 8, 0);
+      tz.TZDateTime(tz.local, d1.year, d1.month, d1.day, 8, 0);
   int beforeStart = prefs.getInt('periodRemDay');
-  scheduledDate = scheduledDate.add(Duration(days: (diff - beforeStart - 2)));
+  scheduledDate = scheduledDate.add(Duration(days: (cycleLen.round() - beforeStart - 2)));
  // print("Scheduled Date: ${scheduledDate.day}");
 
   await flutterLocalNotificationsPlugin.zonedSchedule(

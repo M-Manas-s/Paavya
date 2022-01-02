@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:naariAndroid/class/notifications.dart';
 import 'package:naariAndroid/constants/constants.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:stepper_counter_swipe/stepper_counter_swipe.dart';
@@ -44,7 +45,6 @@ class _settingState extends State<setting> {
         selectedDate = picked;
       });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -116,8 +116,8 @@ class _settingState extends State<setting> {
                         final roundedValue = value.floor().toInt();
                         setState(() {
                           counter = roundedValue.toDouble().toInt();
-                          print(counter);
                           updateCount(counter, snapshot.data.docs[0].id);
+                          resetNotifs();
                         });
                       },
                     ),
@@ -148,8 +148,8 @@ class _settingState extends State<setting> {
                         onChanged: (int value) {
                             setState(() {
                               stepvalue = value;
-
                               updatePerDayUsage(stepvalue, snapshot.data.docs[0].id);
+                              resetNotifs();
                             });
 
                         },

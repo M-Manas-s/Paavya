@@ -426,7 +426,9 @@ class _MusicPlayerState extends State<MusicPlayer> {
                   ? Container(
                 height: MediaQuery.of(context).size.height * 0.4,
                 child: Center(
-                  child: CircularProgressIndicator(),
+                  child: CircularProgressIndicator(
+                    color: Colors.teal,
+                  ),
                 ),
               )
                   : Container(
@@ -750,7 +752,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
                       "Play something!",
                       style: TextStyle(
                         fontSize: 30,
-                        letterSpacing: 3,
+                        letterSpacing: 1,
                         color: Color(0xFF1E7777),
                         fontWeight: FontWeight.w700,
                       ),
